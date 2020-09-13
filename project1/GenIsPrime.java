@@ -85,26 +85,22 @@ public class GenIsPrime {
         e.addNoArgInstruction(ILOAD_2);
         e.addBranchInstruction(IF_ICMPNE, "NOTPRIME");
 
+        // otherwise
         // sb.append(" is not a prime number")
         e.addLDCInstruction(" is a prime number");
         e.addMemberAccessInstruction(INVOKEVIRTUAL, "java/lang/StringBuffer", "append",
                                      "(Ljava/lang/String;)Ljava/lang/StringBuffer;");
+        e.addBranchInstruction(GOTO, "PRINT");
 
-        // System.out.println(sb.toString());
-        e.addMemberAccessInstruction(INVOKEVIRTUAL, "java/lang/StringBuffer",
-                "toString", "()Ljava/lang/String;");
-        e.addMemberAccessInstruction(INVOKEVIRTUAL, "java/io/PrintStream", "println",
-                "(Ljava/lang/String;)V");
-        // return
-        e.addNoArgInstruction(RETURN);        
-
+        // Label NOTPRIME
         e.addLabel("NOTPRIME");
         // sb.append(" is not a prime number")
         e.addLDCInstruction(" is not a prime number");
         e.addMemberAccessInstruction(INVOKEVIRTUAL, "java/lang/StringBuffer", "append",
                                      "(Ljava/lang/String;)Ljava/lang/StringBuffer;");
         
-        // System.out.println(sb.toString());
+        // label PRINT: System.out.println(sb.toString());
+        e.addLabel("PRINT");
         e.addMemberAccessInstruction(INVOKEVIRTUAL, "java/lang/StringBuffer",
                 "toString", "()Ljava/lang/String;");
         e.addMemberAccessInstruction(INVOKEVIRTUAL, "java/io/PrintStream", "println",
@@ -167,8 +163,6 @@ public class GenIsPrime {
         e.addNoArgInstruction(ICONST_1);
         e.addNoArgInstruction(IRETURN);
  
-        
-        
         e.write();
     }
 }
