@@ -793,16 +793,44 @@ public class Parser {
      */
     private JExpression relationalExpression() {
         int line = scanner.token().line();
-        JExpression lhs = additiveExpression();
+        JExpression lhs = shiftExpression();
         if (have(GT)) {
-            return new JGreaterThanOp(line, lhs, additiveExpression());
+            return new JGreaterThanOp(line, lhs, shiftExpression());
         } else if (have(LE)) {
-            return new JLessEqualOp(line, lhs, additiveExpression());
+            return new JLessEqualOp(line, lhs, shiftExpression());
         } else if (have(INSTANCEOF)) {
             return new JInstanceOfOp(line, lhs, referenceType());
         } else {
             return lhs;
         }
+    }
+
+    /**
+     * Parses a shift expression and returns an AST for it.
+     *
+     * <pre>
+     *   shiftExpression ::= additiveExpression
+     *                                { ( ALSHIFT | ARSHIFT | LRSHIFT ) additiveExpression }
+     * </pre>
+     *
+     * @return an AST for a shift expression.
+     */
+    private JExpression shiftExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = additiveExpression();
+        while(more) {
+            if (have(ALSHIFT)) {
+                lhs = new JALeftShiftOp(line, lhs, additiveExpression());
+            } else if (have(ARSHIFT)) {
+                lhs = new JARightShiftOp(line, lhs, additiveExpression());
+            } else if (have(LRSHIFT)) {
+                lhs = new JLRightShiftOp(line, lhs, additiveExpression());
+            } else {
+                more = false;
+            }
+        }
+        return lhs;
     }
 
     /**

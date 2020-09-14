@@ -1,12 +1,13 @@
 1. Enter the number of hours it took you to complete the project between
    the <<< and >>> signs below (eg, <<<10>>>).
 
-   <<< >>>
+   <<<5 - 7 hours>>>
+   I wasn't timing myself
    
 2. Enter the difficulty level (1: very easy; 5: very difficult) of the project
    between the <<< and >>> signs below (eg, <<<3>>>).
 
-   <<< >>>
+   <<<2>>>
 
 3. Provide a short description of how you approached each problem, issues you 
    encountered, and how you resolved those issues.
@@ -48,16 +49,44 @@
 
    Problem 3 (Bitwise Operations)
       Approach: ...
+      My initial approach for this part of the homework was similar to part 2. I read through the instructions and
+      started by added the tokens to the TokenInfo file. I then moved on to the scanner and added the characters to
+      the switch case. In this part it was simpler to add the characters. All but "&" were there own entries, but
+      even "&" was pretty simple as I just needed to add an else case where the token wouldn't be an LAND. Then I
+      worked on adding the expressions. This part was a bit tricky but by studying the other expressions I was able
+      to figure out how to create the new ones. The last part was working on the parser which proved to be tricky.
 
       Issues and resolution: ...
+      Working on the parser was the hardest part here because in problem two of the homework, we simply had to
+      extend previously defined expressions. In this part we had to create new ones. The way I figured this out
+      was by looking at the apendix of the homework assignment, and seeing how the already made expressions were
+      written based on the writeup. After studying a few examples I started working on the new ones. I got most
+      of them working but one of the issues I ran into was that I needed to change the way "conditionalAndExpression"
+      was written. I noticed that it was different right away but I just assumed it was a typo. I spent a lot of time
+      trying to figure out why my code wasn't working by going over all the steps of the compiler. I then noticed
+      that the only unused expression was the inclusiveOrExpression, it needed to be used in the
+      conditionAndExpression. This made sense since the compiler had no way of reaching the code I had written.
+      After fixing this bug I was able to get all the examples comiled and working. 
 
    Problem 4 (Shift Operations)
       Approach: ...
+      At this point of the homework assignment I felt very comfortable with all the steps of adding new
+      language features to the compiler. I followed along the same steps as the previous two parts
+      and was able to get the features working in about 10 minutes.
 
       Issues and resolution: ...
+      I luckily didn't face any issues at this point of the homework because I had made the typical
+      mistakes in previous parts and knew the caviats I needed to watch out for. Like I had mentioned
+      in my response to the first problem, I had the sheet of java byte code instructions open so I
+      could easily find the instruction I needed when implementing the codegen methods. Also when
+      implementing the code in the parser, I knew I would have to make some changes to the methods
+      that were already there. 
 
 4. Did you receive help from anyone? List their names, status (classmate, 
    CS451/651 grad, TA, other), and the nature of help received.
+   I was able to complete this homework simply by looking at the code
+   and using the list of byte code instructions at
+   (https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)
 
    Name               Status       Help Received
    ----               ------       -------------
@@ -68,4 +97,10 @@
    much you learned from doing the assignment, and whether you enjoyed
    doing it.
 
-   ...
+   I found this assignment quite enjoyable. I think the structure was well thought out.
+   The first problem gave me a better understanding of how the compiler builds out the
+   the final code (the classes and methods that are used for all this). The last three
+   problems of the homework were all pretty similar so I feel that my answers in this
+   response might be a bit redundant but overall I think repeating the process over and
+   over gave me a deeper understanding about the compiler and working with the source
+   code.

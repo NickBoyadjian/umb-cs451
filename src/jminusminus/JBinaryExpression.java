@@ -354,3 +354,114 @@ class JAndOp extends JBinaryExpression {
         output.addNoArgInstruction(IAND);
     }
 }
+
+/**
+ * The AST node for an arithmetic left shift (<<) expression.
+ */
+class JALeftShiftOp extends JBinaryExpression {
+    /**
+     * Constructs an AST node for a left shift expression.
+     *
+     * @param line line in which the left shift occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JALeftShiftOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "<<", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISHL);
+    }
+}
+
+/**
+ * The AST node for an arithmetic right shift (<<) expression.
+ */
+class JARightShiftOp extends JBinaryExpression {
+    /**
+     * Constructs an AST node for a left shift expression.
+     *
+     * @param line line in which the right shift occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JARightShiftOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISHR);
+    }
+}
+
+/**
+ * The AST node for a logical right shift (<<) expression.
+ */
+class JLRightShiftOp extends JBinaryExpression {
+    /**
+     * Constructs an AST node for a left shift expression.
+     *
+     * @param line line in which the right shift occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JLRightShiftOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>>", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IUSHR);
+    }
+}
