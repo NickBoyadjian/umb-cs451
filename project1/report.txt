@@ -13,13 +13,38 @@
 
    Problem 1 (Using CLEmitter)
       Approach: ...
+      I started by reading over the assignment and the hints document. One of the hints was that generating IsPrime
+      is very similar to the GenFactorial file. So I started by reading over the GenFactorial file. This gave me a
+      good idea about how the code was generally formatted. From there I mostly just copied the boilerplate stuff, like
+      initializing the class and creating the main method. I made sure to write it all by hand and write notes along
+      the way, that way I would remember what everything was doing better. I also used a website
+      (https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings), which was a huge help in quickly figuring out
+      what some of the instructions were. Having all the other example files was also a huge help because when I ran
+      into other issues that weren't in the GenFactorial file, I could generally find it somewhere else.
 
       Issues and resolution: ...
+      I was initially confused about how method arguments and return types were defined. By looking at all the other
+      Gen files I was able to deduce how it worked, (Arguments in the parens and the return type at the end of the
+      string).
+      Overall I think this first problem was a good intro to better understand how the compiler works and having
+      the chart open that I linked above was the biggest help. Most of the process was storing variables (I kept track
+      of what was where with comments), pushing stuff onto the stack and executing commands, and then just creating the
+      different branches as needed.
 
    Problem 2 (Arithmetic Operations)
       Approach: ...
+      My overall approach for this problem was similar to the first. I started by reading the problem and the hints.
+      The hints gave a good outline of the files I needed to look at, and from there I was able to look at how the other
+      features were implemented and more or less make adjustments to them to fit what I was trying to do.
 
       Issues and resolution: ...
+      I think my biggest issue was understanding what happens at each part of the compilation. So what needed to happen
+      and where. For the division operator I had followed all the same steps as with the modulo but I couldn't figure
+      out why it was erroring out. So I had to follow the steps and see what other parts of the code were doing. I then
+      noticed that it wasn't working because the "/" character gets registered to check for comments in the scanner file.
+      I wasn't really sure how to handle it at first, I could have extended the original code or implemented the
+      division along side the other arithmetic operators in the switch case. I ended up extended the code where the
+      comments where defined.
 
    Problem 3 (Bitwise Operations)
       Approach: ...

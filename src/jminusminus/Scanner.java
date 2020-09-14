@@ -132,6 +132,15 @@ class Scanner {
             case ';':
                 nextCh();
                 return new TokenInfo(SEMI, line);
+            case '~':
+                nextCh();
+                return new TokenInfo(NOT, line);
+            case '|':
+                nextCh();
+                return new TokenInfo(OR, line);
+            case '^':
+                nextCh();
+                return new TokenInfo(XOR, line);
             case '*':
                 nextCh();
                 return new TokenInfo(STAR, line);
@@ -189,8 +198,7 @@ class Scanner {
                     nextCh();
                     return new TokenInfo(LAND, line);
                 } else {
-                    reportScannerError("Operator & is not supported in j--.");
-                    return getNextToken();
+                    return new TokenInfo(AND, line);
                 }
             case '\'':
                 buffer = new StringBuffer();

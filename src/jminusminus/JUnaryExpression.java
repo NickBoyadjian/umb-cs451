@@ -268,3 +268,38 @@ class JPreIncrementOp extends JUnaryExpression {
         }
     }
 }
+
+/**
+ * The AST node for pre-increment (~) expression.
+ */
+class JComplementOp extends JUnaryExpression {
+    /**
+     * Constructs an AST node for a complement expression.
+     *
+     * @param line    line in which the expression occurs in the source file.
+     * @param operand the operand.
+     */
+    public JComplementOp(int line, JExpression operand) {
+        super(line, "~", operand);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        operand = operand.analyze(context);
+        operand.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        operand.codegen(output);
+        output.addNoArgInstruction(ICONST_1);
+        output.addNoArgInstruction(INEG);
+        output.addNoArgInstruction(IXOR);
+    }
+}

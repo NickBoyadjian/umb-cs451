@@ -664,8 +664,8 @@ public class Parser {
      * Parses a conditional-and expression and returns an AST for it.
      *
      * <pre>
-     *   conditionalAndExpression ::= equalityExpression
-     *                                    { LAND equalityExpression }
+     *   conditionalAndExpression ::= inclusiveOrExpression
+     *                                    { LAND inclusiveOrExpression }
      * </pre>
      *
      * @return an AST for a conditional-and expression.
@@ -673,10 +673,82 @@ public class Parser {
     private JExpression conditionalAndExpression() {
         int line = scanner.token().line();
         boolean more = true;
-        JExpression lhs = equalityExpression();
+        JExpression lhs = inclusiveOrExpression();
         while (more) {
             if (have(LAND)) {
-                lhs = new JLogicalAndOp(line, lhs, equalityExpression());
+                lhs = new JLogicalAndOp(line, lhs, inclusiveOrExpression());
+            } else {
+                more = false;
+            }
+        }
+        return lhs;
+    }
+
+     /**
+     * Parses an inclusive-or expression and returns an AST for it.
+     *
+     * <pre>
+     *   inclusiveOrExpression ::= exclusiveOrExpression
+     *                                    { OR exclusiveOrExpression }
+     * </pre>
+     *
+     * @return an AST for an inclusive-or expression.
+     */
+    private JExpression inclusiveOrExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = exclusiveOrExpression();
+        while (more) {
+            if (have(OR)) {
+                lhs = new JInclusiveOrOp(line, lhs, exclusiveOrExpression());
+            } else {
+                more = false;
+            }
+        }
+        return lhs;
+    }
+
+    /**
+     * Parses an XOR expression and returns an AST for it.
+     *
+     * <pre>
+     *   exclusiveOrExpression ::= andExpression
+     *                            { XOR andExpression }
+     * </pre>
+     *
+     * @return an AST for an XOR expression.
+     */
+    private JExpression exclusiveOrExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = andExpression();
+        while(more) {
+            if (have(XOR)) {
+                lhs = new JExclusiveOrOp(line, lhs, andExpression());
+            } else {
+                more = false;
+            }
+        }
+        return lhs;
+    }
+
+    /**
+     * Parses an and expression and returns an AST for it.
+     *
+     * <pre>
+     *   andExpression ::= equalityExpression
+     *                            { AND equalityExpression }
+     * </pre>
+     *
+     * @return an AST for an and expression.
+     */
+    private JExpression andExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = equalityExpression();
+        while (more) {
+            if (have(AND)) {
+                lhs = new JAndOp(line, lhs, equalityExpression());
             } else {
                 more = false;
             }
@@ -764,7 +836,7 @@ public class Parser {
      *
      * <pre>
      *   multiplicativeExpression ::= unaryExpression
-     *                                    { STAR unaryExpression }
+     *                                    { (STAR | DIV | REM) unaryExpression }
      * </pre>
      *
      * @return an AST for a multiplicative expression.
@@ -792,7 +864,7 @@ public class Parser {
      *
      * <pre>
      *   unaryExpression ::= INC unaryExpression
-     *                     | MINUS unaryExpression
+     *                     | (MINUS | PLUS) unaryExpression
      *                     | simpleUnaryExpression
      * </pre>
      *
@@ -816,6 +888,7 @@ public class Parser {
      *
      * <pre>
      *   simpleUnaryExpression ::= LNOT unaryExpression
+     *                           | NOT unaryExpression
      *                           | LPAREN basicType RPAREN unaryExpression
      *                           | LPAREN referenceType RPAREN simpleUnaryExpression
      *                           | postfixExpression
@@ -827,6 +900,8 @@ public class Parser {
         int line = scanner.token().line();
         if (have(LNOT)) {
             return new JLogicalNotOp(line, unaryExpression());
+        } else if (have(NOT)) {
+            return new JComplementOp(line, unaryExpression());
         } else if (seeCast()) {
             mustBe(LPAREN);
             boolean isBasicType = seeBasicType();
