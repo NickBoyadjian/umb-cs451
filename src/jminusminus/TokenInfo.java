@@ -15,13 +15,21 @@ enum TokenKind {
     EXTENDS("extends"), IF("if"), IMPORT("import"), INSTANCEOF("instanceof"), INT("int"),
     NEW("new"), PACKAGE("package"), PRIVATE("private"), PROTECTED("protected"),
     PUBLIC("public"), RETURN("return"), STATIC("static"), SUPER("super"), THIS("this"),
-    VOID("void"), WHILE("while"),
+    VOID("void"), WHILE("while"), BREAK("break"), CASE("case"), CATCH("catch"),
+    CONTINUE("continue"), DEFAULT("default"), DO("do"), DOUBLE("double"), FINALLY("finally"),
+    FOR("for"), IMPLEMENTS("implements"), INTERFACE("interface"), LONG("long"), SWITCH("switch"),
+    THROW("throw"), THROWS("throws"), TRY("try"),
 
     // Operators.
-    ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"),
-    LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
-    DIV("/"), REM("%"), NOT("~"), OR("|"), XOR("^"), AND("&"),
-    ARSHIFT(">>"), ALSHIFT("<<"), LRSHIFT(">>>"),
+    ASSIGN("="), NOT_EQUAL("!="), DEC("--"), EQUAL("=="), GT(">"), GE(">="),
+    INC("++"), LAND("&&"), LE("<="), LNOT("!"), MINUS("-"), MINUS_ASSIGN("-="),
+    PLUS("+"), PLUS_ASSIGN("+="), STAR("*"), STAR_ASSIGN("*="), DIV("/"),
+    DIV_ASSIGN("/="), REM("%"), REM_ASSIGN("%="), NOT("~"), OR("|"), XOR("^"),
+    AND("&"), ARSHIFT(">>"),  ARSHIFT_ASSIGN(">>="), ALSHIFT("<<"), ALSHIFT_ASSIGN("<<="),
+    LRSHIFT(">>>"), LT("<"), XOR_ASSIGN("^="), OR_ASSIGN("|="),
+    LRSHIFT_ASSIGN(">>>="), QUESTION("?"), COLON(":"), LOR("||"), AND_ASSIGN("&="),
+
+
 
     // Separators.
     COMMA(","), DOT("."), LBRACK("["), LCURLY("{"), LPAREN("("), RBRACK("]"), RCURLY("}"),
@@ -32,7 +40,8 @@ enum TokenKind {
 
     // Literals.
     NULL("null"), FALSE("false"), TRUE("true"),
-    INT_LITERAL("<INT_LITERAL>"), CHAR_LITERAL("<CHAR_LITERAL>"),
+    INT_LITERAL("<INT_LITERAL>"), DOUBLE_LITERAL("<DOUBLE_LITERAL>"), LONG_LITERAL("<LONG_LITERAL>"),
+    CHAR_LITERAL("<CHAR_LITERAL>"),
     STRING_LITERAL("<STRING_LITERAL>");
 
     // The token kind's string representation.

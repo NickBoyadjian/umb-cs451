@@ -2,7 +2,6 @@
    the <<< and >>> signs below (eg, <<<10>>>).
 
    <<<5 - 7 hours>>>
-   I wasn't timing myself
    
 2. Enter the difficulty level (1: very easy; 5: very difficult) of the project
    between the <<< and >>> signs below (eg, <<<3>>>).
@@ -43,10 +42,7 @@
       and where. For the division operator I had followed all the same steps as with the modulo but I couldn't figure
       out why it was erroring out. So I had to follow the steps and see what other parts of the code were doing. I then
       noticed that it wasn't working because the "/" character gets registered to check for comments in the scanner file.
-      I wasn't really sure how to handle it at first, I could have extended the original code or implemented the
-      division along side the other arithmetic operators in the switch case. I ended up extended the code where the
-      comments where defined.
-
+      
    Problem 3 (Bitwise Operations)
       Approach: ...
       My initial approach for this part of the homework was similar to part 2. I read through the instructions and
@@ -100,7 +96,8 @@
    I found this assignment quite enjoyable. I think the structure was well thought out.
    The first problem gave me a better understanding of how the compiler builds out the
    the final code (the classes and methods that are used for all this). The last three
-   problems of the homework were all pretty similar so I feel that my answers in this
-   response might be a bit redundant but overall I think repeating the process over and
-   over gave me a deeper understanding about the compiler and working with the source
-   code.
+   problems of the homework were all pretty similar but doing them over and over gave
+   me more confidence in working with the various files. I realize now that some of
+   my comments in the above response were obvious but I had done the homework before 
+   any of the code was talked about in class so I was mostly figuring it out as I went
+   along.

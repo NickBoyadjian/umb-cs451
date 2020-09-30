@@ -1,0 +1,51 @@
+1. Enter the number of hours it took you to complete the project between
+   the <<< and >>> signs below (eg, <<<10>>>).
+
+   <<< 2.5 hours >>>
+   
+2. Enter the difficulty level (1: very easy; 5: very difficult) of the project
+   between <<< and >>> signs below (eg, <<<3>>>).
+
+   <<< 3 >>>
+
+3. Provide a short description of how you approached each problem, issues you 
+   encountered, and how you resolved those issues.
+
+   Problem 1 (Multiline Comment)
+      I approached this problem by first drawing out the diagram and then coding it out. It was as simple as reading
+      a slash followed by a star, then continuing reading until a star is found, and then only stop reading the comment
+      if a slash is found after the star. I accomplished this with just a few lines of code and didn't have any problems.
+
+   Problem 2 (Reserved Words)
+      This part of the homework was probably the easiest. All I had to do was add the tokens to the tokeninfo file
+      and then add them to the hash table stored in scanner.java. The only issue I had here was a typo but it was
+      easy enough to spot after submitting to gradescope.
+
+   Problem 3 (Operators)
+      This part of the homework was basically like homeowork 1. I started by adding the missing tokens, and then
+      making the scanner able to read them. Because of all the practice I've already had with this from homework 1,
+      this part of the homework wasn't really difficult, it was just tedious to add all the checks in the scanner.
+      I didn't have any issues with this part of the assignment.
+
+   Problem 4 (Literals)
+      I approached this problem by first studying the appendix of the homework assignment. I needed to get a good idea
+      about how doubles and longs were strictly defined. Adding the support for longs was my first step because I could
+      see that it was the easiest. After that, I attempted to figure out how to add the support for doubles which
+      proved to be a bit complicated. I drew out the diagram, something I didn't need to do for longs. I was still
+      a little confused but I broke  the problem into sub problems and simply solved the different scenarios one at a
+      time. I had a bug where I was reading one to many characters after reading the double which made my program lose
+      the next line of code. After going over my tokenized version with the correct one, I finally spotted the error and
+      was able to figure out what part of the code was causing it.
+
+4. Did you receive help from anyone? List their names, status (classmate, 
+   CS451/651 grad, TA, other), and the nature of help received.
+
+    No
+
+5. List any other comments here. Feel free to provide any feedback on how
+   much you learned from doing the assignment, and whether you enjoyed
+   doing it.
+
+   I think this assignment, especially the last part, made it very clear why we don't want to hand write the
+   scanner. The code quickly becomes very messy and I can only imagine how tedious it would get when further adding
+   new language features. 
