@@ -19,7 +19,7 @@
    Problem 2 (Reserved Words)
       This part of the homework was probably the easiest. All I had to do was add the tokens to the tokeninfo file
       and then add them to the hash table stored in scanner.java. The only issue I had here was a typo but it was
-      easy enough to spot after submitting to gradescope.
+      easy enough to spot after running a few tests.
 
    Problem 3 (Operators)
       This part of the homework was basically like homeowork 1. I started by adding the missing tokens, and then
@@ -30,8 +30,8 @@
    Problem 4 (Literals)
       I approached this problem by first studying the appendix of the homework assignment. I needed to get a good idea
       about how doubles and longs were strictly defined. Adding the support for longs was my first step because I could
-      see that it was the easiest. After that, I attempted to figure out how to add the support for doubles which
-      proved to be a bit complicated. I drew out the diagram, something I didn't need to do for longs. I was still
+      see that it was the easiest of the two. After that, I attempted to figure out how to add the support for doubles which
+      proved to be a bit complicated. I drew out the diagram, something I didn't feel I needed to do for longs. I was still
       a little confused but I broke  the problem into sub problems and simply solved the different scenarios one at a
       time. I had a bug where I was reading one to many characters after reading the double which made my program lose
       the next line of code. After going over my tokenized version with the correct one, I finally spotted the error and

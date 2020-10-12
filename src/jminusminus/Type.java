@@ -34,6 +34,16 @@ class Type {
     public final static Type INT = typeFor(int.class);
 
     /**
+     * The long type.
+     */
+    public final static Type LONG = typeFor(long.class);
+
+    /**
+     * The double type.
+     */
+    public final static Type DOUBLE = typeFor(double.class);
+
+    /**
      * The char type.
      */
     public final static Type CHAR = typeFor(char.class);

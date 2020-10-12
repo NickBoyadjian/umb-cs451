@@ -120,3 +120,86 @@ class JLogicalAndOp extends JBooleanBinaryExpression {
         }
     }
 }
+
+/**
+ * The AST node for a logical Or (||) expression.
+ */
+class JLogicalOrOp extends JBooleanBinaryExpression {
+    /**
+     * Constructs an AST node for a logical OR expression.
+     *
+     * @param line line in which the logical OR expression occurs in the source file.
+     * @param lhs  lhs operand.
+     * @param rhs  rhs operand.
+     */
+    public JLogicalOrOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "||", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.BOOLEAN);
+        rhs.type().mustMatchExpected(line(), Type.BOOLEAN);
+        type = Type.BOOLEAN;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
+        if (onTrue) {
+            String falseLabel = output.createLabel();
+            lhs.codegen(output, falseLabel, false);
+            rhs.codegen(output, targetLabel, true);
+            output.addLabel(falseLabel);
+        } else {
+            lhs.codegen(output, targetLabel, false);
+            rhs.codegen(output, targetLabel, false);
+        }
+    }
+}
+
+/**
+ * The AST node for a logical not-equal (!=) expression.
+ */
+class JNotEqualOp extends JBooleanBinaryExpression {
+    /**
+     * Constructs an AST node for a logical OR expression.
+     *
+     * @param line line in which the logical NOT_EQUAL expression occurs in the source file.
+     * @param lhs  lhs operand.
+     * @param rhs  rhs operand.
+     */
+    public JNotEqualOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "!=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.BOOLEAN);
+        rhs.type().mustMatchExpected(line(), Type.BOOLEAN);
+        type = Type.BOOLEAN;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        if (lhs.type().isReference())
+            output.addBranchInstruction(onTrue ? IF_ACMPNE : IF_ACMPEQ, targetLabel);
+        else
+            output.addBranchInstruction(onTrue ? IF_ICMPNE : IF_ICMPEQ, targetLabel);
+    }
+}

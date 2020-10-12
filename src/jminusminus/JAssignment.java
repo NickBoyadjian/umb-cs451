@@ -128,3 +128,514 @@ class JPlusAssignOp extends JAssignment {
         ((JLhs) lhs).codegenStore(output);
     }
 }
+
+/**
+ * The AST node for a minus-assign (-=) operation.
+ */
+class JMinusAssignOp extends JAssignment {
+    /**
+     * Constructs the AST node for a minus-assign (-=) operation.
+     *
+     * @param line line in which the assignment operation occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JMinusAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "-=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(), "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for -=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISUB);
+        if (!isStatementExpression) {
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+
+/**
+ * The AST node for a star-assign (*=) operation.
+ */
+class JStarAssignOp extends JAssignment {
+    /**
+     * Constructs the AST node for a star-assign (*=) operation.
+     *
+     * @param line line in which the assignment operation occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JStarAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "*=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(), "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for *=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IMUL);
+        if (!isStatementExpression) {
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+/**
+ * The AST node for a div-assign (/=) operation.
+ */
+class JDivAssignOp extends JAssignment {
+    /**
+     * Constructs the AST node for a div-assign (/=) operation.
+     *
+     * @param line line in which the assignment operation occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JDivAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "/=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(), "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for /=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IDIV);
+        if (!isStatementExpression) {
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+/**
+ * The AST node for a rem-assign (%=) operation.
+ */
+class JRemAssignOp extends JAssignment {
+    /**
+     * Constructs the AST node for a rem-assign (%=) operation.
+     *
+     * @param line line in which the assignment operation occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JRemAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "%=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(), "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for %=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IREM);
+        if (!isStatementExpression) {
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+/**
+ * The AST node for a or-assign (|=) operation.
+ */
+class JOrAssignOp extends JAssignment {
+    /**
+     * Constructs the AST node for a or-assign (|=) operation.
+     *
+     * @param line line in which the assignment operation occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JOrAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "|=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(), "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for |=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IOR);
+        if (!isStatementExpression) {
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+/**
+ * The AST node for a and-assign (&=) operation.
+ */
+class JAndAssignOp extends JAssignment {
+    /**
+     * Constructs the AST node for a and-assign (&=) operation.
+     *
+     * @param line line in which the assignment operation occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JAndAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "&=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(), "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for &=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IAND);
+        if (!isStatementExpression) {
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+/**
+ * The AST node for a xor-assign (^=) operation.
+ */
+class JXorAssignOp extends JAssignment {
+    /**
+     * Constructs the AST node for a xor-assign (^=) operation.
+     *
+     * @param line line in which the assignment operation occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JXorAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "^=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(), "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for ^=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IXOR);
+        if (!isStatementExpression) {
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+/**
+ * The AST node for a alshift-assign (<<=) operation.
+ */
+class JALeftShiftAssignOp extends JAssignment {
+    /**
+     * Constructs the AST node for a alshift-assign (<<=) operation.
+     *
+     * @param line line in which the assignment operation occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JALeftShiftAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "<<=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(), "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for <<=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISHL);
+        if (!isStatementExpression) {
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+/**
+ * The AST node for a arshift-assign (>>=) operation.
+ */
+class JARightShiftAssignOp extends JAssignment {
+    /**
+     * Constructs the AST node for a arshift-assign (<<=) operation.
+     *
+     * @param line line in which the assignment operation occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JARightShiftAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(), "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for >>=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISHR);
+        if (!isStatementExpression) {
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+/**
+ * The AST node for a lrshift-assign (>>>=) operation.
+ */
+class JLRightShiftAssignOp extends JAssignment {
+    /**
+     * Constructs the AST node for a lrshift-assign (>>=) operation.
+     *
+     * @param line line in which the assignment operation occurs in the source file.
+     * @param lhs  the lhs operand.
+     * @param rhs  the rhs operand.
+     */
+    public JLRightShiftAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>>=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(), "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for >>>=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsLvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(LSHR);
+        if (!isStatementExpression) {
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}

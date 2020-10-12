@@ -59,6 +59,57 @@ class JGreaterThanOp extends JComparisonExpression {
 }
 
 /**
+ * The AST node for a greater-equal (&gte;) expression.
+ */
+class JGreaterEqualOp extends JComparisonExpression {
+    /**
+     * Constructs an AST node for a greater-than expression.
+     *
+     * @param line line in which the greater-equal expression occurs in the source file.
+     * @param lhs  lhs operand.
+     * @param rhs  rhs operand.
+     */
+    public JGreaterEqualOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">=", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addBranchInstruction(onTrue ? IF_ICMPGE : IF_ICMPLT, targetLabel);
+    }
+}
+
+/**
+ * The AST node for a less-than (<=) expression.
+ */
+class JLessThanOp extends JComparisonExpression {
+
+    /**
+     * Constructs an AST node for a less-than-or-equal-to expression.
+     *
+     * @param line line in which the less-than-or-equal-to expression occurs in the source file.
+     * @param lhs  lhs operand.
+     * @param rhs  rhs operand.
+     */
+    public JLessThanOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "<", lhs, rhs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addBranchInstruction(onTrue ? IF_ICMPLT : IF_ICMPGE, targetLabel);
+    }
+}
+
+/**
  * The AST node for a less-than-or-equal-to (&lt;=) expression.
  */
 class JLessEqualOp extends JComparisonExpression {
