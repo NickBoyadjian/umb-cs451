@@ -32,7 +32,6 @@ class JSwitchBlockStatement extends JAST {
      * {@inheritDoc}
      */
     public void toJSON(JSONElement json) {
-        JSONElement result = new JSONElement();
 
         switchLabels.forEach(label -> {
             JSONElement e = new JSONElement();
@@ -44,11 +43,9 @@ class JSwitchBlockStatement extends JAST {
             }
         });
 
-//        blockStatements.forEach(block -> {
-//            JSONElement e1 = new JSONElement();
-//            json.addChild("JStatementExpression", json);
-//            block.toJSON(e1);
-//        });
+        blockStatements.forEach(block -> {
+            block.toJSON(json);
+        });
     }
 
 }

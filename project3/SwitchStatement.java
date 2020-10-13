@@ -11,12 +11,16 @@ public class SwitchStatement {
         switch (rank) {
         case 1:
             rankStr = "Ace";
+            break;
         case 11:
             rankStr = "Jack";
+            break;
         case 12:
             rankStr = "Queen";
+            break;
         case 13:
             rankStr = "King";
+            break;
         default:
             rankStr = String.valueOf(rank);
         }
@@ -24,12 +28,16 @@ public class SwitchStatement {
         switch (suit) {
         case 1:
             suitStr = "Spades";
+            break;
         case 2:
             suitStr = "Hearts";
+            break;
         case 3:
             suitStr = "Diamonds";
+            break;
         case 4:
             suitStr = "Clubs";
+            break;
         }
         System.out.println(rankStr + " of " + suitStr);
     }

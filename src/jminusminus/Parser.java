@@ -318,6 +318,7 @@ public class Parser {
      *
      * <pre>
      *   statement ::= block
+     *               | BREAK SEMI
      *               | IF parExpression statement [ ELSE statement ]
      *               | RETURN [ expression ] SEMI
      *               | SEMI
@@ -332,6 +333,33 @@ public class Parser {
         int line = scanner.token().line();
         if (see(LCURLY)) {
             return block();
+        } else if (have(BREAK)) {
+            mustBe(SEMI);
+            return new JBreakStatement(line);
+        } else if (have(DO)) {
+            JStatement statement = statement();
+            mustBe(WHILE);
+            JExpression parExpression = parExpression();
+            mustBe(SEMI);
+            return new JDoStatement(line, statement, parExpression);
+        } else if (have(FOR)) {
+            ArrayList<JStatement> forInit = new ArrayList<>();
+            ArrayList<JStatement> forUpdate = new ArrayList<>();
+            JExpression forCondition = null;
+            JStatement forBody;
+            mustBe(LPAREN);
+            if (!see(SEMI))
+                forInit = forInit(line);
+            mustBe(SEMI);
+            if (!see(SEMI))
+                forCondition = expression();
+            mustBe(SEMI);
+            if (!see(RPAREN))
+                forUpdate = forUpdate(line);
+            mustBe(RPAREN);
+            forBody = statement();
+            return new JForStatement(line, forInit, forCondition, forUpdate, forBody);
+
         } else if (have(IF)) {
             JExpression test = parExpression();
             JStatement consequent = statement();
@@ -366,6 +394,51 @@ public class Parser {
             mustBe(SEMI);
             return statement;
         }
+    }
+
+    /**
+     * Parses and returns a forInit.
+     *
+     * <pre>
+     *   forInit ::= statementExpression { COMMA statementExpression }
+     *   | type variableDeclaration
+     * </pre>
+     *
+     * @return a list of formal parameters.
+     */
+    private ArrayList<JStatement> forInit(int line) {
+        ArrayList<JStatement> result = new ArrayList<>();
+
+        if (seeBasicType() || seeReferenceType()) {
+            Type type = null;
+            result.add(new JVariableDeclaration(line, variableDeclarators(type())));
+        } else {
+            result.add(statementExpression());
+            while (have(COMMA)) {
+                result.add(statementExpression());
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Parses and returns a forUpdate.
+     *
+     * <pre>
+     *   forUpdate ::= statementExpression { COMMA statementExpression }
+     * </pre>
+     *
+     * @return a list of formal parameters.
+     */
+    private ArrayList<JStatement> forUpdate(int line) {
+        ArrayList<JStatement> result = new ArrayList<>();
+
+        result.add(statementExpression());
+        while(have(COMMA))
+            result.add(statementExpression());
+
+        return result;
     }
 
     /**

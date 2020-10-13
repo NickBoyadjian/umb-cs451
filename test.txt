@@ -1,65 +1,85 @@
 {
     "JCompilationUnit:1":
     {
-        "source": "project3/nick.java",
-        "imports": ["java.lang.Integer", "java.lang.System", "java.util.Random"],
-        "JClassDeclaration:5":
+        "source": "project3/ForStatement.java",
+        "imports": ["java.lang.Integer", "java.lang.System"],
+        "JClassDeclaration:4":
         {
             "modifiers": ["public"],
-            "name": "SwitchStatement",
+            "name": "ForStatement",
             "super": "java.lang.Object",
-            "JMethodDeclaration:6":
+            "JMethodDeclaration:5":
             {
                 "name": "main",
                 "returnType": "void",
                 "modifiers": ["public", "static"],
                 "parameters": [["args", "String[]"]],
-                "JBlock:6":
+                "JBlock:5":
                 {
-                    "JVariableDeclaration:7":
+                    "JVariableDeclaration:6":
                     {
-                        "JVariableDeclarator:7":
+                        "JVariableDeclarator:6":
                         {
-                            "name": "rng",
-                            "type": "Random",
+                            "name": "n",
+                            "type": "int",
                             "Initializer":
                             {
-                                "JNewOp:7":
+                                "JMessageExpression:6":
                                 {
-                                    "type": "Random"
+                                    "ambiguousPart": "Integer",
+                                    "name": "parseInt",
+                                    "Argument":
+                                    {
+                                        "JArrayExpression:6":
+                                        {
+                                            "TheArray":
+                                            {
+                                                "JVariable:6":
+                                                {
+                                                    "name": "args"
+                                                }
+                                            },
+                                            "TheIndex":
+                                            {
+                                                "JLiteralInt:6":
+                                                {
+                                                    "type": "",
+                                                    "value": "0"
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     },
-                    "JVariableDeclaration:8":
+                    "JVariableDeclaration:7":
                     {
-                        "JVariableDeclarator:8":
+                        "JVariableDeclarator:7":
                         {
-                            "name": "rank",
+                            "name": "sum",
                             "type": "int",
                             "Initializer":
                             {
-                                "JBinaryExpression:8":
+                                "JLiteralInt:7":
                                 {
-                                    "operator": "+",
                                     "type": "",
-                                    "Operand1":
-                                    {
-                                        "JMessageExpression:8":
-                                        {
-                                            "ambiguousPart": "rng",
-                                            "name": "nextInt",
-                                            "Argument":
-                                            {
-                                                "JLiteralInt:8":
-                                                {
-                                                    "type": "",
-                                                    "value": "13"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "Operand2":
+                                    "value": "0"
+                                }
+                            }
+                        }
+                    },
+                    "JForStatement:8":
+                    {
+                        "Init":
+                        {
+                            "JVariableDeclaration:8":
+                            {
+                                "JVariableDeclarator:8":
+                                {
+                                    "name": "i",
+                                    "type": "int",
+                                    "Initializer":
                                     {
                                         "JLiteralInt:8":
                                         {
@@ -69,99 +89,88 @@
                                     }
                                 }
                             }
-                        }
-                    },
-                    "JVariableDeclaration:9":
-                    {
-                        "JVariableDeclarator:9":
+                        },
+                        "Condition":
                         {
-                            "name": "suit",
-                            "type": "int",
-                            "Initializer":
+                            "JBinaryExpression:8":
                             {
-                                "JBinaryExpression:9":
+                                "operator": "<=",
+                                "type": "",
+                                "Operand1":
                                 {
-                                    "operator": "+",
+                                    "JVariable:8":
+                                    {
+                                        "name": "i"
+                                    }
+                                },
+                                "Operand2":
+                                {
+                                    "JVariable:8":
+                                    {
+                                        "name": "n"
+                                    }
+                                }
+                            }
+                        },
+                        "Update":
+                        {
+                            "JStatementExpression:8":
+                            {
+                                "JUnaryExpression:8":
+                                {
+                                    "operator": "++ (post)",
                                     "type": "",
-                                    "Operand1":
+                                    "Operand":
                                     {
-                                        "JMessageExpression:9":
+                                        "JVariable:8":
                                         {
-                                            "ambiguousPart": "rng",
-                                            "name": "nextInt",
-                                            "Argument":
-                                            {
-                                                "JLiteralInt:9":
-                                                {
-                                                    "type": "",
-                                                    "value": "3"
-                                                }
-                                            }
+                                            "name": "i"
                                         }
-                                    },
-                                    "Operand2":
+                                    }
+                                }
+                            }
+                        },
+                        "Body":
+                        {
+                            "JBlock:8":
+                            {
+                                "JStatementExpression:9":
+                                {
+                                    "JBinaryExpression:9":
                                     {
-                                        "JLiteralInt:9":
+                                        "operator": "+=",
+                                        "type": "",
+                                        "Operand1":
                                         {
-                                            "type": "",
-                                            "value": "1"
+                                            "JVariable:9":
+                                            {
+                                                "name": "sum"
+                                            }
+                                        },
+                                        "Operand2":
+                                        {
+                                            "JVariable:9":
+                                            {
+                                                "name": "i"
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     },
-                    "JVariableDeclaration:10":
+                    "JStatementExpression:11":
                     {
-                        "JVariableDeclarator:10":
+                        "JMessageExpression:11":
                         {
-                            "name": "rankStr",
-                            "type": "String",
-                            "Initializer":
+                            "ambiguousPart": "System.out",
+                            "name": "println",
+                            "Argument":
                             {
-                                "JLiteralString:10":
+                                "JVariable:11":
                                 {
-                                    "type": "",
-                                    "value": ""
+                                    "name": "sum"
                                 }
-                            }
-                        }
-                    },
-                    "JSwitchStatement:11":
-                    {
-                        "Condition":
-                        {
-                            "JVariable:11":
-                            {
-                                "name": "rank"
-                            }
-                        },
-                        "SwitchStatementGroup":
-                        {
-                            "Case":
-                            {
-                                "JLiteralInt:12":
-                                {
-                                    "type": "",
-                                    "value": "1"
-                                }
-                            }
-                        },
-                        "SwitchStatementGroup":
-                        {
-                            "Case":
-                            {
-                                "JLiteralInt:14":
-                                {
-                                    "type": "",
-                                    "value": "11"
-                                }
-                            }
-                        },
-                        "SwitchStatementGroup":
-                        {
-                            "Default":
-                            {
                             }
                         }
                     }
