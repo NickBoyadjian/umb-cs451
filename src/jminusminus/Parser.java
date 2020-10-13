@@ -321,6 +321,7 @@ public class Parser {
      *               | IF parExpression statement [ ELSE statement ]
      *               | RETURN [ expression ] SEMI
      *               | SEMI
+     *               | SWITCH parExpression LCURLY { switchBlockStatementGroup } RCURLY
      *               | WHILE parExpression statement
      *               | statementExpression SEMI
      * </pre>
@@ -350,6 +351,15 @@ public class Parser {
             }
         } else if (have(SEMI)) {
             return new JEmptyStatement(line);
+        } else if (have(SWITCH)) {
+            ArrayList<JSwitchBlockStatement> switchBlockStatementGroup = new ArrayList<>();
+            JExpression parExpression = parExpression();
+            mustBe(LCURLY);
+            while (!see(RCURLY) && !see(EOF)) {
+                switchBlockStatementGroup.add(switchBlockStatementGroup());
+            }
+            mustBe(RCURLY);
+            return new JSwitchStatement(line, parExpression, switchBlockStatementGroup);
         } else {
             // Must be a statementExpression
             JStatement statement = statementExpression();
@@ -411,6 +421,53 @@ public class Parser {
         JExpression expr = expression();
         mustBe(RPAREN);
         return expr;
+    }
+
+    /**
+     * Parses a switch block statement and returns an AST for it.
+     *
+     * <pre>
+     *   switchBlockStatementGroup ::= switchLabel { switchLabel } { blockStatement }
+     * </pre>
+     *
+     * @return an AST for a switch block statement.
+     */
+    private JSwitchBlockStatement switchBlockStatementGroup() {
+        int line = scanner.token().line();
+        ArrayList<JExpression> switchLabels = new ArrayList<>();
+        ArrayList<JStatement> blockStatements = new ArrayList<>();
+
+        switchLabels.add(switchLabel()); // The first switch label
+        while (see(CASE) || see(DEFAULT)) // 0 or more following labels
+            switchLabels.add(switchLabel());
+
+        while (!see(CASE) && !see(DEFAULT) && !see(RCURLY))
+            blockStatements.add(blockStatement());
+
+        return new JSwitchBlockStatement(line, switchLabels, blockStatements);
+    }
+
+    /**
+     * Parses a switch label expression and returns an AST for it.
+     *
+     * <pre>
+     *   switchLabel ::= CASE expression COLON
+     *                 | DEFLT COLON
+     * </pre>
+     *
+     * @return an AST for a switch block statement.
+     */
+    private JExpression switchLabel() {
+        JExpression expression;
+        if (have(CASE)) {
+            expression = expression();
+            mustBe(COLON);
+            return expression;
+        } else {
+            mustBe(DEFAULT);
+            mustBe(COLON);
+            return null;
+        }
     }
 
     /**
@@ -646,7 +703,7 @@ public class Parser {
      * Parses an assignment expression and returns an AST for it.
      *
      * <pre>
-     *   assignmentExpression ::= conditionalAndExpression
+     *   assignmentExpression ::= conditionalExpression
      *                                [ ( ASSIGN
      *                                | PLUS_ASSIGN | MINUS_ASSIGN
      *                                | STAR_ASSIGN | DIV_ASSIGN | REM_ASSIGN
@@ -658,7 +715,7 @@ public class Parser {
      */
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
-        JExpression lhs = conditionalAndExpression();
+        JExpression lhs = conditionalExpression();
         if (have(ASSIGN)) {
             return new JAssignOp(line, lhs, assignmentExpression());
         } else if (have(PLUS_ASSIGN)) {
@@ -689,6 +746,28 @@ public class Parser {
     }
 
     /**
+     * Parses a conditional expression and returns an AST for it.
+     *
+     * <pre>
+     *   conditionalExpression ::= conditionalOrExpression
+     *                                    [ QUESTION expression COLON conditionalExpression ]
+     * </pre>
+     *
+     * @return an AST for a conditional expression.
+     */
+    private JExpression conditionalExpression() {
+        int line = scanner.token().line();
+        JExpression lhs = conditionalOrExpression();
+        if (have(QUESTION)) {
+            JExpression trueBranch = expression();
+            mustBe(COLON);
+            lhs = new JConditionalExpression(line, lhs, trueBranch, conditionalExpression());
+
+        }
+        return lhs;
+    }
+
+    /**
      * Parses a conditional-or expression and returns an AST for it.
      *
      * <pre>
@@ -703,7 +782,7 @@ public class Parser {
         boolean more = true;
         JExpression lhs = conditionalAndExpression();
         while (more) {
-            if (have(LAND)) {
+            if (have(LOR)) {
                 lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
             } else {
                 more = false;
