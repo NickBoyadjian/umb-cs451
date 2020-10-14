@@ -234,9 +234,9 @@ class JMethodDeclaration extends JAST implements JMember {
         if (thrownExceptions != null) {
             ArrayList<String> value = new ArrayList<String>();
             for (Type exception : thrownExceptions) {
-                value.add(exception.toString());
+                value.add("\"" + exception.toString()+ "\"");
             }
-            e.addAttribute("exceptions", value);
+            e.addAttribute("throws", value);
         }
         if (context != null) {
             context.toJSON(e);

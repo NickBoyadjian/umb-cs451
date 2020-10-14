@@ -21,107 +21,115 @@ public interface JavaCCParserConstants {
   /** RegularExpression Id. */
   int BOOLEAN = 10;
   /** RegularExpression Id. */
-  int CHAR = 11;
+  int CATCH = 11;
   /** RegularExpression Id. */
-  int CLASS = 12;
+  int CHAR = 12;
   /** RegularExpression Id. */
-  int ELSE = 13;
+  int CLASS = 13;
   /** RegularExpression Id. */
-  int EXTENDS = 14;
+  int ELSE = 14;
   /** RegularExpression Id. */
-  int FALSE = 15;
+  int EXTENDS = 15;
   /** RegularExpression Id. */
-  int IF = 16;
+  int FALSE = 16;
   /** RegularExpression Id. */
-  int IMPORT = 17;
+  int IF = 17;
   /** RegularExpression Id. */
-  int INSTANCEOF = 18;
+  int IMPORT = 18;
   /** RegularExpression Id. */
-  int INT = 19;
+  int INSTANCEOF = 19;
   /** RegularExpression Id. */
-  int NEW = 20;
+  int INT = 20;
   /** RegularExpression Id. */
-  int NULL = 21;
+  int NEW = 21;
   /** RegularExpression Id. */
-  int PACKAGE = 22;
+  int NULL = 22;
   /** RegularExpression Id. */
-  int PRIVATE = 23;
+  int PACKAGE = 23;
   /** RegularExpression Id. */
-  int PROTECTED = 24;
+  int PRIVATE = 24;
   /** RegularExpression Id. */
-  int PUBLIC = 25;
+  int PROTECTED = 25;
   /** RegularExpression Id. */
-  int RETURN = 26;
+  int PUBLIC = 26;
   /** RegularExpression Id. */
-  int STATIC = 27;
+  int RETURN = 27;
   /** RegularExpression Id. */
-  int SUPER = 28;
+  int STATIC = 28;
   /** RegularExpression Id. */
-  int THIS = 29;
+  int SUPER = 29;
   /** RegularExpression Id. */
-  int TRUE = 30;
+  int THIS = 30;
   /** RegularExpression Id. */
-  int VOID = 31;
+  int THROW = 31;
   /** RegularExpression Id. */
-  int WHILE = 32;
+  int THROWS = 32;
   /** RegularExpression Id. */
-  int COMMA = 33;
+  int TRUE = 33;
   /** RegularExpression Id. */
-  int DOT = 34;
+  int TRY = 34;
   /** RegularExpression Id. */
-  int LBRACK = 35;
+  int VOID = 35;
   /** RegularExpression Id. */
-  int LCURLY = 36;
+  int WHILE = 36;
   /** RegularExpression Id. */
-  int LPAREN = 37;
+  int COMMA = 37;
   /** RegularExpression Id. */
-  int RPAREN = 38;
+  int DOT = 38;
   /** RegularExpression Id. */
-  int RBRACK = 39;
+  int LBRACK = 39;
   /** RegularExpression Id. */
-  int RCURLY = 40;
+  int LCURLY = 40;
   /** RegularExpression Id. */
-  int SEMI = 41;
+  int LPAREN = 41;
   /** RegularExpression Id. */
-  int ASSIGN = 42;
+  int RPAREN = 42;
   /** RegularExpression Id. */
-  int DEC = 43;
+  int RBRACK = 43;
   /** RegularExpression Id. */
-  int EQUAL = 44;
+  int RCURLY = 44;
   /** RegularExpression Id. */
-  int GT = 45;
+  int SEMI = 45;
   /** RegularExpression Id. */
-  int INC = 46;
+  int ASSIGN = 46;
   /** RegularExpression Id. */
-  int LAND = 47;
+  int DEC = 47;
   /** RegularExpression Id. */
-  int LE = 48;
+  int EQUAL = 48;
   /** RegularExpression Id. */
-  int LNOT = 49;
+  int GT = 49;
   /** RegularExpression Id. */
-  int MINUS = 50;
+  int INC = 50;
   /** RegularExpression Id. */
-  int PLUS = 51;
+  int LAND = 51;
   /** RegularExpression Id. */
-  int PLUS_ASSIGN = 52;
+  int LE = 52;
   /** RegularExpression Id. */
-  int STAR = 53;
+  int LNOT = 53;
   /** RegularExpression Id. */
-  int IDENTIFIER = 54;
+  int MINUS = 54;
   /** RegularExpression Id. */
-  int LETTER = 55;
+  int PLUS = 55;
   /** RegularExpression Id. */
-  int DIGIT = 56;
+  int PLUS_ASSIGN = 56;
   /** RegularExpression Id. */
-  int INT_LITERAL = 57;
+  int STAR = 57;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 58;
+  int IDENTIFIER = 58;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 59;
+  int LETTER = 59;
   /** RegularExpression Id. */
-  int ESC = 60;
+  int DIGIT = 60;
   /** RegularExpression Id. */
-  int ERROR = 61;
+  int INT_LITERAL = 61;
+  /** RegularExpression Id. */
+  int CHAR_LITERAL = 62;
+  /** RegularExpression Id. */
+  int STRING_LITERAL = 63;
+  /** RegularExpression Id. */
+  int ESC = 64;
+  /** RegularExpression Id. */
+  int ERROR = 65;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -141,6 +149,7 @@ public interface JavaCCParserConstants {
     "<COMMENT>",
     "\"abstract\"",
     "\"boolean\"",
+    "\"catch\"",
     "\"char\"",
     "\"class\"",
     "\"else\"",
@@ -160,7 +169,10 @@ public interface JavaCCParserConstants {
     "\"static\"",
     "\"super\"",
     "\"this\"",
+    "\"throw\"",
+    "\"throws\"",
     "\"true\"",
+    "\"try\"",
     "\"void\"",
     "\"while\"",
     "\",\"",

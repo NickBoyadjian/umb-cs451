@@ -84,7 +84,7 @@ class JGreaterEqualOp extends JComparisonExpression {
 }
 
 /**
- * The AST node for a less-than (<=) expression.
+ * The AST node for a less-than (<) expression.
  */
 class JLessThanOp extends JComparisonExpression {
 
