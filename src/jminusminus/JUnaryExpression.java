@@ -375,7 +375,7 @@ class JPostIncrementOp extends JUnaryExpression {
                 ((JLhs) operand).codegenDuplicateRvalue(output);
             }
             output.addNoArgInstruction(ICONST_1);
-            output.addNoArgInstruction(IADD);
+            output.addNoArgInstruction(ISUB);
             ((JLhs) operand).codegenStore(output);
         }
     }

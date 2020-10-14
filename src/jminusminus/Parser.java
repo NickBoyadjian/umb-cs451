@@ -805,6 +805,8 @@ public class Parser {
         JExpression expr = expression();
         if (expr instanceof JAssignment
                 || expr instanceof JPreIncrementOp
+                || expr instanceof JPostIncrementOp
+                || expr instanceof JPredecrementOp
                 || expr instanceof JPostDecrementOp
                 || expr instanceof JMessageExpression
                 || expr instanceof JSuperConstruction
@@ -1230,10 +1232,11 @@ public class Parser {
         while (see(DOT) || see(LBRACK)) {
             primaryExpr = selector(primaryExpr);
         }
-        while (have(DEC))
-            primaryExpr = new JPostDecrementOp(line, primaryExpr);
         while (have(INC))
             primaryExpr = new JPostIncrementOp(line, primaryExpr);
+        while (have(DEC))
+            primaryExpr = new JPostDecrementOp(line, primaryExpr);
+
 
         return primaryExpr;
     }
