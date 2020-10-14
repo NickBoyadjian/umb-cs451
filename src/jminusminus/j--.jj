@@ -112,6 +112,7 @@ SKIP: { <COMMENT: ~[]> }
 TOKEN: {
   <ABSTRACT: "abstract">
 | <BOOLEAN: "boolean">
+| <CATCH: "catch">
 | <CHAR: "char">
 | <CLASS: "class">
 | <ELSE: "else">
@@ -131,7 +132,10 @@ TOKEN: {
 | <STATIC: "static">
 | <SUPER: "super">
 | <THIS: "this">
+| <THROW: "throw">
+| <THROWS: "throws">
 | <TRUE: "true">
+| <TRY: "try">
 | <VOID: "void">
 | <WHILE: "while">
 }

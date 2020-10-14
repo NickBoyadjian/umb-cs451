@@ -323,6 +323,9 @@ public class Parser {
      *               | RETURN [ expression ] SEMI
      *               | SEMI
      *               | SWITCH parExpression LCURLY { switchBlockStatementGroup } RCURLY
+     *               | TRY block
+     *                  { CATCH LPAREN formalParameter RPAREN block }
+     *                      [ FINALLY block ]
      *               | WHILE parExpression statement
      *               | statementExpression SEMI
      * </pre>
@@ -336,6 +339,9 @@ public class Parser {
         } else if (have(BREAK)) {
             mustBe(SEMI);
             return new JBreakStatement(line);
+        } else if (have(CONTINUE)) {
+            mustBe(SEMI);
+            return new JContinueStatement(line);
         } else if (have(DO)) {
             JStatement statement = statement();
             mustBe(WHILE);
@@ -365,6 +371,32 @@ public class Parser {
             JStatement consequent = statement();
             JStatement alternate = have(ELSE) ? statement() : null;
             return new JIfStatement(line, test, consequent, alternate);
+        } else if (have(TRY)) {
+            JBlock tryBlock = block();
+            if (see(CATCH)) {
+                ArrayList<JFormalParameter> parameters = new ArrayList<>();
+                ArrayList<JBlock> catchBlocks = new ArrayList<>();
+
+                while (have(CATCH)) {
+                    mustBe(LPAREN);
+                    JFormalParameter parameter = formalParameter();
+                    parameters.add(parameter);
+                    mustBe(RPAREN);
+                    JBlock block = block();
+                    catchBlocks.add(block);
+                }
+
+                if (have(FINALLY)) {
+                    JBlock finallyBlock = block();
+                    return new JTryStatement(line, tryBlock, parameters, catchBlocks, finallyBlock);
+                } else {
+                    return new JTryStatement(line, tryBlock, parameters, catchBlocks, null);
+                }
+            } else {
+                mustBe(FINALLY);
+                JBlock finallyBlock = block();
+                return new JTryStatement(line, tryBlock, null, null, finallyBlock);
+            }
         } else if (have(WHILE)) {
             JExpression test = parExpression();
             JStatement statement = statement();
@@ -1170,12 +1202,11 @@ public class Parser {
         while (see(DOT) || see(LBRACK)) {
             primaryExpr = selector(primaryExpr);
         }
-        while (have(INC)) {
-            primaryExpr = new JPostIncrementOp(line, primaryExpr);
-        }
-        while (have(DEC)) {
+        while (have(DEC))
             primaryExpr = new JPostDecrementOp(line, primaryExpr);
-        }
+        while (have(INC))
+            primaryExpr = new JPostIncrementOp(line, primaryExpr);
+
         return primaryExpr;
     }
 
@@ -1527,7 +1558,7 @@ public class Parser {
 
     // Returns true if we are looking at a basic type, and false otherwise.
     private boolean seeBasicType() {
-        return (see(BOOLEAN) || see(CHAR) || see(INT));
+        return (see(BOOLEAN) || see(CHAR) || see(INT) || see(DOUBLE) || see(LONG));
     }
 
     // Returns true if we are looking at a reference type, and false otherwise.

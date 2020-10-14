@@ -36,6 +36,11 @@ class JMethodDeclaration extends JAST implements JMember {
     protected JBlock body;
 
     /**
+     * Thrown Exceptions.
+     */
+    protected ArrayList<Type> thrownExceptions;
+
+    /**
      * Method context (built in analyze()).
      */
     protected MethodContext context;
@@ -78,6 +83,31 @@ class JMethodDeclaration extends JAST implements JMember {
         this.returnType = returnType;
         this.params = params;
         this.body = body;
+        this.thrownExceptions = null;
+        isAbstract = mods.contains("abstract");
+        isStatic = mods.contains("static");
+        isPrivate = mods.contains("private");
+    }
+
+    /**
+     * Constructs an AST node for a method declaration.
+     *
+     * @param line       line in which the method declaration occurs in the source file.
+     * @param mods       modifiers.
+     * @param name       method name.
+     * @param returnType return type.
+     * @param params     the formal parameters.
+     * @param body       method body.
+     */
+    public JMethodDeclaration(int line, ArrayList<String> mods, String name, Type returnType,
+                              ArrayList<JFormalParameter> params, JBlock body, ArrayList<Type> thrownExceptions) {
+        super(line);
+        this.mods = mods;
+        this.name = name;
+        this.returnType = returnType;
+        this.params = params;
+        this.body = body;
+        this.thrownExceptions = thrownExceptions;
         isAbstract = mods.contains("abstract");
         isStatic = mods.contains("static");
         isPrivate = mods.contains("private");
@@ -200,6 +230,13 @@ class JMethodDeclaration extends JAST implements JMember {
                         param.type() == null ? "" : param.type().toString()));
             }
             e.addAttribute("parameters", value);
+        }
+        if (thrownExceptions != null) {
+            ArrayList<String> value = new ArrayList<String>();
+            for (Type exception : thrownExceptions) {
+                value.add(exception.toString());
+            }
+            e.addAttribute("exceptions", value);
         }
         if (context != null) {
             context.toJSON(e);
