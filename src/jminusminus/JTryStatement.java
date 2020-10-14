@@ -55,13 +55,6 @@ public class JTryStatement extends JStatement {
             catchBlocks.get(i).toJSON(catchBlock);
         }
 
-//        JSONElement parameters = new JSONElement();
-//        e.addChild("Parameters", parameters);
-//        this.parameters.forEach(cb -> cb.toJSON(parameters));
-//
-//        JSONElement catchBlock = new JSONElement();
-//        e.addChild("CatchBlock", catchBlock);
-//        this.catchBlocks.forEach(cb -> cb.toJSON(catchBlock));
 
         JSONElement finallyBlock = new JSONElement();
         e.addChild("FinallyBlock", finallyBlock);

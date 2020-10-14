@@ -1,33 +1,99 @@
 1. Enter the number of hours it took you to complete the project between
    the <<< and >>> signs below (eg, <<<10>>>).
 
-   <<< >>>
+   <<< 6 >>>
    
 2. Enter the difficulty level (1: very easy; 5: very difficult) of the project
    between the <<< and >>> signs below (eg, <<<3>>>).
 
-   <<< >>>
+   <<< 7 >>>
 
 3. Provide a short description of how you approached each problem, issues you 
    encountered, and how you resolved those issues.
 
-   Problem 1 (Long and Double Basic Types): ...
+   Problem 1 (Long and Double Basic Types):
+   I started with implementing the classes for the two types. In order to get a better understanding
+   of what they needed to do, I looked at the Integer class and built off of that. I then had to go into
+   the Type file and add the data types. This was pretty straight forward but one thing I didn't notice was
+   the boxed types at first which I later realised I could add. For this last part, Looking at the appendix
+   made it simple. I just needed to extend the basic data type and the literals in order to get it working.
 
    Problem 2 (Operators): ...
+   This part of the assignment was a bit tricky at first as there was already a lot of code in the files
+   and I really needed to shift through everything to get a better understanding. For the most part I was
+   able to build off of what was already given. For example I had the LessThan done, so implementing
+   greaterThan was simply doing the same thing but changing the operator and I went ahead and modified
+   the codegen method. For the post increment I spent a decent amount of time debugging. Implementing the
+   class was straight forward but I had an issue with my parser. Basically I implemented the
+   postfixExpression and unaryExpression properly but I didn't realize I had to extend the statement expression.
+   I tested all the increment and decrement variations and noticed that the post increment was simply not working
+   like the post decrement. After digging through the parser file I finally found that the statementExpression
+   was missing a simple line that would enable the post increment to work without spitting out an error
+   during the parsing stage
    
    Problem 3 (Conditional Expression): ...
+   I went about this problem by looking at how if statements were implemented. I copied a lot from
+   the if statement class and just edited it so that there had to be an else branch. In terms of the parser,
+   this part was luckily pretty simple as there wasn't any optional or repeating sections. You read all the
+   parts in order and there isn't any variation. I think it was at this stage that I really needed to get
+   down how the JSON interface worked so I spent a lot of time looking at the methods and trying different
+   things out. Although this wasn't this most complicated JSON, it was my first time having to really
+   understand how the methods would output the ast.
 
    Problem 4 (Switch Statement): ...
+   This was the first problem that gave me some trouble. At first I couldn't wrap my head around
+   how the different classes came together to build the final switch statement. We had the
+   label and the switchBlockGroup. The way I worked through this was by looking at the appendix and
+   keeping that handy while going over the sample ast. After working through it in my head a few times
+   it finally clicked and I was able to start writing the classes. The parser I was able to implement
+   by using a while statement in order to read the variable amount of switch block statements.
 
    Problem 5 (Do Statement): ...
+   This particiular problem went smoothly for me. After doing the switch statement, I felt pretty
+   comfortable with writing the JDoStatement class. All it needed was a statement and an expression
+   and a toJSON method which for the most part was constructed with the toJSON methods already provided
+   in the member variable classes.
 
    Problem 6 (For Statement): ...
+   This problem was one of the hardest in this assignment for me. I had a lot of trouble understanding
+   how the for loop could be implemented in order to allow for all the variations. For example you could
+   have variable declarations or assignments in the forInit section. Then you could also just omit
+   certain parts of the for loop-- so that all needed to be accounted for. My first hurdle was implementing
+   the forInit so it could handle statement expressions or a variable declaration. The professor helped me
+   by pointing out that you could create an array list to either store multiple expressions or an inner
+   list containing a variableDeclaration. From here I needed to implement the parsing section for the
+   actual for loop which I accomplished by always checking for a semi colon to check if a certain part was
+   omitted before moving forward. Although it was messy, it wasn't super complex to write.
+   As for the toJSON method, I was able to stream line most of it by using the forEach method on my
+   ArrayLists and passing an anonymous function that converts the inner elements to json.
 
    Problem 7 (Break Statement): ...
+   Since we are only worried about parsing in this assignment, break was one of the easiest
+   features to implement. The class had no member variables and the toJSON method simply returned
+   an empty object with the title "JBreakStatement". The parse was also simple because we just
+   needed to check for a break and then conclude that a semi colon followed.
 
    Problem 8 (Continue Statement): ...
+   Continue was implemented exactly the same way as break.
 
    Problem 9 (Exception Handlers): ...
+   This problem was probably the biggest in scope. I started by implementing the try class first.
+   I just put in the member variables that I needed and left the toJSON method to do at the end.
+   modifying the constructordeclaration and methoddeclaration was a bit confusing for me because
+   I wasn't exactly sure what needed to be done. After going through the code, I realized I could
+   add an array list for the exceptions. I then made two constructors to handle the case when
+   no exceptions were needed. Lastly, implementing the toJSON method for these two classes was
+   a matter of copying over the other parameters and making small adjustments to the string formatting.
+   From here I implemented the parser. The main difficulty here was checking for multiple catches
+   and an optional finally, or no catches and a required finally. A lot of nesting loops and if statements
+   were needed. Lastly I edited the memberDecl function to handle the throws keyword. My solution wasn't
+   the most elegant-- what I did was work doing the different cases already there, and then do an
+   additional check for the throws keyword. If there was a throws, I needed to check if there were
+   multiple ones, handle that case, or handle the case of only one. outside of this section I had to
+   handle having no exceptions. So there was a lot of repeating code throughout this method to deal
+   with all the different variations. The last thing I did was implement the toJSON methods.
+   I solved this by using a for loop and some string manipulation to get the parameters
+   correct. 
 
    Problem 10 (Interface Type Declaration): ...
 
