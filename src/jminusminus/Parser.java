@@ -102,14 +102,17 @@ public class Parser {
      * Parses a type declaration and returns an AST for it.
      *
      * <pre>
-     *   typeDeclaration ::= modifiers classDeclaration
+     *   typeDeclaration ::= modifiers { classDeclaration | interfaceDeclaration }
      * </pre>
      *
      * @return an AST for a type declaration.
      */
     private JAST typeDeclaration() {
         ArrayList<String> mods = modifiers();
-        return classDeclaration(mods);
+        if (see(CLASS))
+            return classDeclaration(mods);
+        else
+            return interfaceDeclaration(mods);
     }
 
     /**
@@ -182,6 +185,7 @@ public class Parser {
      * <pre>
      *   classDeclaration ::= CLASS IDENTIFIER
      *                            [ EXTENDS qualifiedIdentifier ]
+     *                              [ IMPLEMENTS qualifiedIdentifier { COMMA qualifiedIdentifier } ]
      *                                classBody
      * </pre>
      *
@@ -194,12 +198,45 @@ public class Parser {
         mustBe(IDENTIFIER);
         String name = scanner.previousToken().image();
         Type superClass;
+        ArrayList<Type> interfaces = new ArrayList<>();
         if (have(EXTENDS)) {
             superClass = qualifiedIdentifier();
         } else {
             superClass = Type.OBJECT;
         }
+        if (have(IMPLEMENTS)) {
+            do {
+                interfaces.add(qualifiedIdentifier());
+            } while (have(COMMA));
+            return new JClassDeclaration(line, mods, name, superClass, classBody(), interfaces);
+        }
         return new JClassDeclaration(line, mods, name, superClass, classBody());
+    }
+
+    /**
+     * Parses a class declaration and returns an AST for it.
+     *
+     * <pre>
+     *   classDeclaration ::= INTERFACE IDENTIFIER
+     *                            [ EXTENDS qualifiedIdentifier { COMMA qualifiedIdentifier } ]
+     *                                interfaceBody
+     * </pre>
+     *
+     * @param mods the class modifiers.
+     * @return an AST for a class declaration.
+     */
+    private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods) {
+        int line = scanner.token().line();
+        mustBe(INTERFACE);
+        mustBe(IDENTIFIER);
+        String name = scanner.previousToken().image();
+        ArrayList<TypeName> superClasses = new ArrayList<>();
+        if (have(EXTENDS)) {
+            do {
+                superClasses.add(qualifiedIdentifier());
+            } while (have(COMMA));
+        }
+        return new JInterfaceDeclaration(line, mods, name, superClasses, interfaceBody());
     }
 
     /**
@@ -212,6 +249,26 @@ public class Parser {
      * @return a list of members in the class body.
      */
     private ArrayList<JMember> classBody() {
+        ArrayList<JMember> members = new ArrayList<JMember>();
+        mustBe(LCURLY);
+        while (!see(RCURLY) && !see(EOF)) {
+            ArrayList<String> mods = modifiers();
+            members.add(memberDecl(mods));
+        }
+        mustBe(RCURLY);
+        return members;
+    }
+
+    /**
+     * Parses an interface body and returns a list of members in the body.
+     *
+     * <pre>
+     *   classBody ::= LCURLY { modifiers interfaceMemberDecl } RCURLY
+     * </pre>
+     *
+     * @return a list of members in the class body.
+     */
+    private ArrayList<JMember> interfaceBody() {
         ArrayList<JMember> members = new ArrayList<JMember>();
         mustBe(LCURLY);
         while (!see(RCURLY) && !see(EOF)) {
@@ -293,6 +350,64 @@ public class Parser {
                     memberDecl = new JFieldDeclaration(line, mods, variableDeclarators(type));
                     mustBe(SEMI);
                 }
+            }
+        }
+        return memberDecl;
+    }
+
+    /**
+     * Parses a member declaration and returns an AST for it.
+     *
+     * <pre>
+     *   interfaceMemberDecl ::= (VOID | type) IDENTIFIER formalParameters
+     *                              [ THROWS qualifiedIdentifier { COMMA qualifiedIdentifier }] SEMI
+     *                           | type variableDeclaration SEMI
+     * </pre>
+     *
+     * @param mods the class member modifiers.
+     * @return an AST for a member declaration.
+     */
+    private JMember interfaceMemberDecl(ArrayList<String> mods) {
+        int line = scanner.token().line();
+        JMember memberDecl = null;
+        Type type = null;
+        if (have(VOID)) {
+            // void method
+            type = Type.VOID;
+            mustBe(IDENTIFIER);
+            String name = scanner.previousToken().image();
+            ArrayList<JFormalParameter> params = formalParameters();
+            ArrayList<Type> exceptions;
+            if (have(THROWS)) {
+                exceptions = new ArrayList<>();
+                exceptions.add(qualifiedIdentifier());
+                while(have(COMMA))
+                    exceptions.add(qualifiedIdentifier());
+                memberDecl = new JMethodDeclaration(line, mods, name, type, params, null, exceptions);
+            } else
+                memberDecl = new JMethodDeclaration(line, mods, name, type, params, null);
+            mustBe(SEMI);
+        } else {
+            type = type();
+            if (seeIdentLParen()) {
+                // Non void method
+                mustBe(IDENTIFIER);
+                String name = scanner.previousToken().image();
+                ArrayList<JFormalParameter> params = formalParameters();
+                ArrayList<Type> exceptions;
+                if (have(THROWS)) {
+                    exceptions = new ArrayList<>();
+                    exceptions.add(qualifiedIdentifier());
+                    while(have(COMMA))
+                        exceptions.add(qualifiedIdentifier());
+                    memberDecl = new JMethodDeclaration(line, mods, name, type, params, null, exceptions);
+                } else
+                    memberDecl = new JMethodDeclaration(line, mods, name, type, params, null);
+                mustBe(SEMI);
+            } else {
+                // Field
+                memberDecl = new JFieldDeclaration(line, mods, variableDeclarators(type));
+                mustBe(SEMI);
             }
         }
         return memberDecl;

@@ -37,6 +37,9 @@ class JClassDeclaration extends JAST implements JTypeDecl {
     // Static (class) fields of this class.
     private ArrayList<JFieldDeclaration> staticFieldInitializations;
 
+    // List of interfaces
+    private ArrayList<Type> interfaces;
+
     /**
      * Constructs an AST node for a class declaration.
      *
@@ -56,6 +59,29 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         hasExplicitConstructor = false;
         instanceFieldInitializations = new ArrayList<JFieldDeclaration>();
         staticFieldInitializations = new ArrayList<JFieldDeclaration>();
+    }
+
+    /**
+     * Constructs an AST node for a class declaration.
+     *
+     * @param line       line in which the class declaration occurs in the source file.
+     * @param mods       class modifiers.
+     * @param name       class name.
+     * @param superType  super class type.
+     * @param classBlock class block.
+     * @param interfaces list of implemented interfaces
+     */
+    public JClassDeclaration(int line, ArrayList<String> mods, String name, Type superType,
+                             ArrayList<JMember> classBlock, ArrayList<Type> interfaces) {
+        super(line);
+        this.mods = mods;
+        this.name = name;
+        this.superType = superType;
+        this.classBlock = classBlock;
+        this.interfaces = interfaces;
+        hasExplicitConstructor = false;
+        instanceFieldInitializations = new ArrayList<>();
+        staticFieldInitializations = new ArrayList<>();
     }
 
     /**
@@ -220,6 +246,11 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         e.addAttribute("super", superType == null ? "" : superType.toString());
         if (context != null) {
             context.toJSON(e);
+        }
+        if (this.interfaces != null) {
+            ArrayList<String> value = new ArrayList<String>();
+            interfaces.forEach(inter -> value.add("\"" + inter.toString() + "\""));
+            e.addAttribute("implements", value);
         }
         if (classBlock != null) {
             for (JMember member : classBlock) {

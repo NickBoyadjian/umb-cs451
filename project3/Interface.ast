@@ -1,7 +1,7 @@
 {
     "JCompilationUnit:1":
     {
-        "source": "project3/Interface.java",
+        "source": "/home/siyer/Dropbox/teaching/cs451_assessments/project3/Interface.java",
         "imports": ["java.lang.Integer", "java.lang.System"],
         "JInterfaceDeclaration:4":
         {
