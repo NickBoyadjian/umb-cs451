@@ -551,7 +551,7 @@ public class Parser {
         } else if (have(SEMI)) {
             return new JEmptyStatement(line);
         } else if (have(SWITCH)) {
-            ArrayList<JSwitchBlockStatement> switchBlockStatementGroup = new ArrayList<>();
+            ArrayList<JSwitchBlockStatementGroup> switchBlockStatementGroup = new ArrayList<>();
             JExpression parExpression = parExpression();
             mustBe(LCURLY);
             while (!see(RCURLY) && !see(EOF)) {
@@ -680,7 +680,7 @@ public class Parser {
      *
      * @return an AST for a switch block statement.
      */
-    private JSwitchBlockStatement switchBlockStatementGroup() {
+    private JSwitchBlockStatementGroup switchBlockStatementGroup() {
         int line = scanner.token().line();
         ArrayList<JExpression> switchLabels = new ArrayList<>();
         ArrayList<JStatement> blockStatements = new ArrayList<>();
@@ -692,7 +692,7 @@ public class Parser {
         while (!see(CASE) && !see(DEFAULT) && !see(RCURLY))
             blockStatements.add(blockStatement());
 
-        return new JSwitchBlockStatement(line, switchLabels, blockStatements);
+        return new JSwitchBlockStatementGroup(line, switchLabels, blockStatements);
     }
 
     /**

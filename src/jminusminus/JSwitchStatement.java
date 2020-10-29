@@ -2,13 +2,11 @@ package jminusminus;
 
 import java.util.ArrayList;
 
-import static jminusminus.CLConstants.GOTO;
-
 public class JSwitchStatement extends JStatement {
     private JExpression parExpression;
-    private ArrayList<JSwitchBlockStatement> switchBlockStatementGroup;
+    private ArrayList<JSwitchBlockStatementGroup> switchBlockStatementGroup;
 
-    JSwitchStatement (int line, JExpression e, ArrayList<JSwitchBlockStatement> s) {
+    JSwitchStatement (int line, JExpression e, ArrayList<JSwitchBlockStatementGroup> s) {
         super(line);
         this.parExpression = e;
         this.switchBlockStatementGroup = s;

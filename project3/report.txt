@@ -96,17 +96,26 @@
    correct. 
 
    Problem 10 (Interface Type Declaration): ...
+   Before creating the JInterfaceDeclaration class, I started by first looking through the
+   JClassDeclaration class. I used this class as a template to build off of because I knew
+   there were some similarities between the two. I stripped down all the methods that weren't
+   needed and I was left with the constructor and the toJSON method. From here I looked at
+   the appendix to get an understanding of what fields were needed and how to implememnt them.
+   I think the hardest part of this problem was working with the parser. I spent a lot of time
+   looking back and forth between all the interconnected parts of the interface-- the declaration,
+   the body, and the member declarations. Some of this I could model after the respective functions
+   that dealt with classes but there were a few changes that needed to be made.
 
 4. Did you receive help from anyone? List their names, status (classmate, 
    CS451/651 grad, TA, other), and the nature of help received.
 
-   Name               Status       Help Received
-   ----               ------       -------------
-
-   ...                ...          ...
+   I only got help from the professor with a question I asked on piazza.
 
 5. List any other comments here. Feel free to provide any feedback on how
    much you learned from doing the assignment, and whether you enjoyed
    doing it.
-
-   ...
+   I thought this assignment was quite challenging. I think if I had more direction on
+   how to implement the classes, it would have been a bit easier. For example, I wasn't
+   always sure on the types I needed to use for the member variables of the new classes
+   I created. I was able to get them all working but I wonder if small changes to these
+   things might have an affect later on down the line.

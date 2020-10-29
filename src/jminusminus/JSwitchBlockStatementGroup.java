@@ -2,12 +2,12 @@ package jminusminus;
 
 import java.util.ArrayList;
 
-class JSwitchBlockStatement extends JAST {
+class JSwitchBlockStatementGroup extends JAST {
 
     private ArrayList<JExpression> switchLabels;
     private ArrayList<JStatement> blockStatements;
 
-    public JSwitchBlockStatement(int line, ArrayList<JExpression> switchLabels, ArrayList<JStatement> blockStatements) {
+    public JSwitchBlockStatementGroup(int line, ArrayList<JExpression> switchLabels, ArrayList<JStatement> blockStatements) {
         super(line);
         this.switchLabels = switchLabels;
         this.blockStatements = blockStatements;

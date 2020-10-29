@@ -108,20 +108,37 @@ SKIP: { <END_COMMENT: "\n" | "\r" | "\r\n">: DEFAULT }
 <IN_SINGLE_LINE_COMMENT>
 SKIP: { <COMMENT: ~[]> }
 
+// Multi line comment -- ignored
+SKIP: { <BEGIN_M_COMMENT: "/*">: IN_MULTI_LINE_COMMENT }
+<IN_MULTI_LINE_COMMENT>
+SKIP: { <END_M_COMMENT: "*/">: DEFAULT }
+<IN_MULTI_LINE_COMMENT>
+SKIP: { <MCOMMENT: ~[]> }
+
 // Reserved words
 TOKEN: {
   <ABSTRACT: "abstract">
 | <BOOLEAN: "boolean">
+| <BREAK: "break">
+| <CASE: "case">
 | <CATCH: "catch">
+| <CONTINUE: "continue">
 | <CHAR: "char">
 | <CLASS: "class">
+| <DO: "do">
+| <DOUBLE: "double">
 | <ELSE: "else">
 | <EXTENDS: "extends">
 | <FALSE: "false">
+| <FINALLY: "finally">
+| <FOR: "for">
 | <IF: "if">
 | <IMPORT: "import">
+| <IMPLEMENTS: "implements">
+| <INTERFACE: "interface">
 | <INSTANCEOF: "instanceof">
 | <INT: "int">
+| <LONG: "long">
 | <NEW: "new">
 | <NULL: "null">
 | <PACKAGE: "package">
@@ -131,6 +148,7 @@ TOKEN: {
 | <RETURN: "return">
 | <STATIC: "static">
 | <SUPER: "super">
+| <SWITCH: "switch">
 | <THIS: "this">
 | <THROW: "throw">
 | <THROWS: "throws">
@@ -156,17 +174,42 @@ TOKEN: {
 // Operators
 TOKEN: {
   <ASSIGN: "=">
+| <ALSHIFT: "<<">
+| <ALSHIFT_ASSIGN: "<<=">
+| <AND: "&">
+| <AND_ASSIGN: "&=">
+| <ARSHIFT: ">>">
+| <ARSHIFT_ASSIGN: ">>=">
+| <COLON: ":">
 | <DEC: "--">
+| <DIV: "/">
+| <DIV_ASSIGN: "/=">
 | <EQUAL: "==">
+| <GE: ">=">
 | <GT: ">">
 | <INC: "++">
 | <LAND: "&&">
 | <LE: "<=">
+| <LT: "<">
 | <LNOT: "!">
+| <LOR: "||">
+| <LRSHIFT: ">>>">
+| <LRSHIFT_ASSIGN: ">>>=">
 | <MINUS: "-">
+| <MINUS_ASSIGN: "-=">
+| <NOT: "~">
+| <NOT_EQUAL: "!=">
+| <OR: "|">
+| <OR_ASSIGN: "|=">
 | <PLUS: "+">
 | <PLUS_ASSIGN: "+=">
+| <QUESTION: "?">
+| <REM: "%">
+| <REM_ASSIGN: "%=">
 | <STAR: "*">
+| <STAR_ASSIGN: "*=">
+| <XOR: "^">
+| <XOR_ASSIGN: "^=">
 }
 
 // Identifiers
@@ -174,13 +217,22 @@ TOKEN: {
   <IDENTIFIER: ( <LETTER> | "_" | "$") ( <LETTER> | <DIGIT> |"_" | "$" )*>
 | <#LETTER: [ "a"-"z", "A"-"Z" ]>
 | <#DIGIT: [ "0"-"9" ]>
+| <#DIGITS: (<DIGIT>)+>
+| <#SUFFIX: ["d", "D"]>
+| <#EXPONENT: ["e" , "E"] ([ "+" , "-" ])? <DIGITS> >
 }
 
 // Literals
 TOKEN: {
-  <INT_LITERAL: <DIGIT> ( <DIGIT> )*>
+  <INT_LITERAL: <DIGITS>>
 | <CHAR_LITERAL: "'" ( <ESC> | ~[ "'", "\\", "\n", "\r" ]) "'">
+| <DOUBLE_LITERAL:
+    <DIGITS> "." (<DIGITS>)? (<EXPONENT>)? (<SUFFIX>)?
+ |  "." <DIGITS> (<EXPONENT>) (<SUFFIX>)?
+ |  <DIGITS> <EXPONENT> (<SUFFIX>)?
+ |  <DIGITS> (<EXPONENT>)? <SUFFIX>>
 | <STRING_LITERAL: "\"" ( <ESC> | ~[ "\"", "\\", "\n", "\r" ] )* "\"">
+| <LONG_LITERAL: <DIGITS> ( "L" | "l" ) >
 | <#ESC: "\\" [ "n", "t", "b", "r", "f", "\\", "'", "\"" ]>
 }
 
