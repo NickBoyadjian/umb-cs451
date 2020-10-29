@@ -125,7 +125,7 @@ TOKEN: {
 | <CONTINUE: "continue">
 | <CHAR: "char">
 | <CLASS: "class">
-| <DEFAULT: "default">
+| <DEFLT: "default">
 | <DO: "do">
 | <DOUBLE: "double">
 | <ELSE: "else">
@@ -644,7 +644,7 @@ private JStatement statement():
     JStatement body       = null;
     JExpression expr      = null;
     JSwitchBlockStatementGroup aGroup = null;
-    ArrayList<JSwitchBlockStatementGroup> switchStatements = new ArrayList<~>();
+    ArrayList<JSwitchBlockStatementGroup> switchStatements = new ArrayList<JSwitchBlockStatementGroup>();
 }
 {
     try {
@@ -674,9 +674,9 @@ private JStatement statement():
         <LCURLY>
         (
             aGroup = switchBlockStatementGroup()
-            { switchStatements.add(aGroup) }
+            { switchStatements.add(aGroup); }
         )*
-        <RCURCLY>
+        <RCURLY>
         { statement = new JSwitchStatement(line, expr, switchStatements); } |
 
         <RETURN>
@@ -795,13 +795,15 @@ private JExpression parExpression():
  */
 private JSwitchBlockStatementGroup switchBlockStatementGroup():
 {
-    ArrayList<JExpression> labels = new ArrayList<~>();
-    ArrayList<JStatement> statements = new ArrayList<~>();
+    int line = 0;
+    ArrayList<JExpression> labels = new ArrayList<JExpression>();
+    ArrayList<JStatement> statements = new ArrayList<JStatement>();
     JExpression aLabel = null;
     JStatement aStatement = null;
 }
 {
     try {
+        { line = token.beginLine; }
         aLabel = expression()
         { labels.add(aLabel); }
         (
@@ -818,7 +820,7 @@ private JSwitchBlockStatementGroup switchBlockStatementGroup():
     } catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
     }
-    { return expr; }
+    { return new JSwitchBlockStatementGroup(line, labels, statements); }
 }
 
 /**
@@ -840,7 +842,7 @@ private JExpression switchLabel():
         <CASE>
         expr = expression()
         <COLON> |
-        <DEFAULT> <COLON>
+        <DEFLT> <COLON>
     } catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
     }
