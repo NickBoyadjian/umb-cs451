@@ -921,7 +921,7 @@ public class Parser {
         if (expr instanceof JAssignment
                 || expr instanceof JPreIncrementOp
                 || expr instanceof JPostIncrementOp
-                || expr instanceof JPredecrementOp
+                || expr instanceof JPreDecrementOp
                 || expr instanceof JPostDecrementOp
                 || expr instanceof JMessageExpression
                 || expr instanceof JSuperConstruction
@@ -1291,7 +1291,7 @@ public class Parser {
         if (have(INC)) {
             return new JPreIncrementOp(line, unaryExpression());
         } else if (have(DEC)) {
-            return new JPredecrementOp(line, unaryExpression());
+            return new JPreDecrementOp(line, unaryExpression());
         } else if (have(MINUS)) {
             return new JNegateOp(line, unaryExpression());
         } else if (have(PLUS)) {

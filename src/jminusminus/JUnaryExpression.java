@@ -160,14 +160,14 @@ class JUnaryPlusOp extends JUnaryExpression {
 /**
  * The AST node for pre-decrement (--) expression.
  */
-class JPredecrementOp extends JUnaryExpression {
+class JPreDecrementOp extends JUnaryExpression {
     /**
      * Constructs an AST node for a pre-decrement expression.
      *
      * @param line    line in which the expression occurs in the source file.
      * @param operand the operand.
      */
-    public JPredecrementOp(int line, JExpression operand) {
+    public JPreDecrementOp(int line, JExpression operand) {
         super(line, "-- (pre)", operand);
     }
 
