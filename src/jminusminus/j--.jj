@@ -624,6 +624,7 @@ private JStatement blockStatement():
  *
  * <pre>
  *   statement ::= block
+ *               | BREAK SEMI
  *               | IF parExpression statement [ ELSE statement ]
  *               | RETURN [ expression ] SEMI
  *               | SEMI
@@ -645,6 +646,9 @@ private JStatement statement():
     JExpression expr      = null;
     JSwitchBlockStatementGroup aGroup = null;
     ArrayList<JSwitchBlockStatementGroup> switchStatements = new ArrayList<JSwitchBlockStatementGroup>();
+
+    ArrayList<JStatement> forInit = new ArrayList<JStatement>();
+    ArrayList<JStatement> forUpdate = new ArrayList<JStatement>();
 }
 {
     try {
@@ -667,6 +671,34 @@ private JStatement statement():
         body = statement()
         { statement = new JWhileStatement(line, test, body); } |
 
+        <BREAK>
+        { line = token.beginLine; }
+        <SEMI>
+        { statement = new JBreakStatement(line); } |
+
+        <DO>
+        { line = token.beginLine; }
+        body = statement()
+        expr = parExpression()
+        <SEMI>
+        { statement = new JDoStatement(line, body, expr); } |
+
+        <FOR>
+        <LPAREN>
+        { line = token.beginLine; }
+        [ forInit = forInit(line) ]
+        <SEMI>
+        [ expr = expression() ]
+        <SEMI>
+        [ forUpdate = forUpdate(line) ]
+        <RPAREN>
+        body = statement()
+        { statement = new JForStatement(line, forInit, expr, forUpdate, body); } |
+
+        <CONTINUE>
+        { line = token.beginLine; }
+        <SEMI>
+        { statement = new JContinueStatement(line); } |
 
         <SWITCH>
         { line = token.beginLine;  }
@@ -782,6 +814,71 @@ private JExpression parExpression():
         recoverFromError(new int[] { SEMI, EOF }, e);
     }
     { return expr; }
+}
+
+/**
+ * Parses a forInit statement and returns an AST for it.
+ *
+ * <pre>
+ *   forInit ::= statementExpression { COMMA statementExpression }
+ *             | type variableDeclarators
+ * </pre>
+ *
+ * @return an AST for a parenthesized expression.
+ */
+ArrayList<JStatement> forInit(int line):
+{
+    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+    JStatement aStatement = null;
+    Type type = null;
+}
+{
+    try {
+        (basicType() | referenceType())
+        { statements.add(new JVariableDeclaration(line, variableDeclarators(type()))); } |
+
+        aStatement = statement()
+        { statements.add(aStatement); }
+        (
+            <COMMA>
+            aStatement = statement()
+            { statements.add(aStatement); }
+        )*
+
+    } catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return statements; }
+}
+
+/**
+ * Parses a forBody statement and returns an AST for it.
+ *
+ * <pre>
+ *   forInit ::= statementExpression { COMMA statementExpression }
+ * </pre>
+ *
+ * @return an AST for a parenthesized expression.
+ */
+ArrayList<JStatement> forUpdate(int line):
+{
+    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+    JStatement aStatement = null;
+}
+{
+    try {
+        aStatement = statement()
+        { statements.add(aStatement); }
+        (
+            <COMMA>
+            aStatement = statement()
+            { statements.add(aStatement); }
+        )*
+
+    } catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return statements; }
 }
 
 /**
