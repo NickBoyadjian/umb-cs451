@@ -231,7 +231,7 @@ class JMethodDeclaration extends JAST implements JMember {
             }
             e.addAttribute("parameters", value);
         }
-        if (thrownExceptions != null) {
+        if (thrownExceptions != null && thrownExceptions.size() > 0) {
             ArrayList<String> value = new ArrayList<String>();
             for (Type exception : thrownExceptions) {
                 value.add("\"" + exception.toString()+ "\"");

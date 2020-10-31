@@ -327,7 +327,7 @@ private TypeName qualifiedIdentifier():
  * Parses a type declaration and returns an AST for it.
  *
  * <pre>
- *   typeDeclaration ::= modifiers classDeclaration
+ *   typeDeclaration ::= modifiers ( classDeclaration | interfaceDeclaration )
  * </pre>
  *
  * @return an AST for a type declaration.
@@ -335,16 +335,18 @@ private TypeName qualifiedIdentifier():
 private JAST typeDeclaration():
 {
     ArrayList<String> mods = null;
-    JAST classDeclaration = null;
+    JAST declaration = null;
 }
 {
     try {
         mods = modifiers()
-        classDeclaration = classDeclaration(mods)
+        declaration = classDeclaration(mods) |
+        mods = modifiers()
+        declaration = interfaceDeclaration(mods)
     } catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
     }
-    { return classDeclaration; }
+    { return declaration; }
 }
 
 /**
@@ -441,6 +443,8 @@ private JClassDeclaration classDeclaration(ArrayList<String> mods):
     int line = 0;
     String name = "";
     Type superClass = Type.OBJECT;
+    ArrayList<Type> interfaces = new ArrayList<Type>();
+    Type anInterface = null;
     ArrayList<JMember> classBody = null;
 }
 {
@@ -453,11 +457,21 @@ private JClassDeclaration classDeclaration(ArrayList<String> mods):
             <EXTENDS>
             superClass = qualifiedIdentifier()
         ]
+        [
+            <IMPLEMENTS>
+            anInterface = qualifiedIdentifier()
+            { interfaces.add(anInterface); }
+            (
+                <COMMA>
+                anInterface = qualifiedIdentifier()
+                { interfaces.add(anInterface); }
+            )*
+        ]
         classBody = classBody()
     } catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
     }
-    { return new JClassDeclaration(line, mods, name, superClass, classBody); }
+    { return new JClassDeclaration(line, mods, name, superClass, classBody, interfaces); }
 }
 
 /**
@@ -495,8 +509,10 @@ private ArrayList<JMember> classBody():
  *
  * <pre>
  *   memberDecl ::= IDENTIFIER formalParameters
+ *                      [ THROWS qualifiedIdentifier { COMMA qualifiedIdentifier } ]
  *                      block
  *                | (VOID | type) IDENTIFIER formalParameters
+ *                      [ THROWS qualifiedIdentifier { COMMA qualifiedIdentifier } ]
  *                      (block | SEMI)
  *                | type variableDeclarators SEMI
  * </pre>
@@ -513,6 +529,9 @@ private JMember memberDecl(ArrayList<String> mods):
     JBlock body = null;
     ArrayList<JVariableDeclarator> variableDeclarators = null;
     JMember memberDecl = null;
+
+    Type exception = null;
+    ArrayList<Type> exceptions = new ArrayList<Type>();
 }
 {
     try {
@@ -524,9 +543,149 @@ private JMember memberDecl(ArrayList<String> mods):
                 name = token.image;
             }
             params = formalParameters()
+            [
+                <THROWS>
+                exception = qualifiedIdentifier() { exceptions.add(exception); }
+                ( exception = qualifiedIdentifier() { exceptions.add(exception); } )*
+            ]
             body = block()
-            { memberDecl = new JConstructorDeclaration(line, mods, name, params, body); }
+            { memberDecl = new JConstructorDeclaration(line, mods, name, params, body, exceptions); }
         ) |
+        LOOKAHEAD((<VOID> | type()) <IDENTIFIER> <LPAREN>)
+        (
+            (
+                <VOID>
+                { type = Type.VOID; } |
+                type = type()
+            )
+            { line = token.beginLine; }
+            <IDENTIFIER>
+            { name = token.image; }
+            params = formalParameters()
+            [
+                <THROWS>
+                exception = qualifiedIdentifier() { exceptions.add(exception); }
+                ( exception = qualifiedIdentifier() { exceptions.add(exception); } )*
+            ]
+            (
+                body = block() |
+                <SEMI>
+            )
+            { memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, exceptions); }
+        ) |
+        (
+            type = type()
+            { line = token.beginLine; }
+            variableDeclarators = variableDeclarators(type)
+            { memberDecl = new JFieldDeclaration(line, mods, variableDeclarators); }
+            <SEMI>
+        )
+    } catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return memberDecl; }
+}
+
+/**
+ * Parses an interface declaration and returns an AST for it.
+ *
+ * <pre>
+ *   interfaceDeclaration ::= INTERFACE IDENTIFIER
+ *                            [ EXTENDS qualifiedIdentifier { COMMA qualifiedIdentifier } ]
+ *                                interfaceBody
+ * </pre>
+ *
+ * @param mods the interface modifiers.
+ * @return an AST for an interface declaration.
+ */
+private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods):
+{
+    int line = 0;
+    String name = "";
+    TypeName aSuperClass = null;
+    ArrayList<TypeName> superClasses = new ArrayList<TypeName>();
+    JMember aMember = null;
+    ArrayList<JMember> interfaceBody = new ArrayList<JMember>();
+}
+{
+    try {
+        <INTERFACE>
+        { line = token.beginLine; }
+        <IDENTIFIER>
+        { name = token.image; }
+        [
+            <EXTENDS>
+            aSuperClass = qualifiedIdentifier()
+            { superClasses.add(aSuperClass); }
+            (
+                <COMMA>
+                aSuperClass = qualifiedIdentifier()
+                { superClasses.add(aSuperClass); }
+            )*
+        ]
+        interfaceBody = interfaceBody()
+    } catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return new JInterfaceDeclaration(line, mods, name, superClasses, interfaceBody); }
+}
+
+/**
+ * Parses an interface body and returns a list of members in the body.
+ *
+ * <pre>
+ *   interfaceBody ::= LCURLY { modifiers interfaceMemberDecl } RCURLY
+ * </pre>
+ *
+ * @return a list of members in the interface body.
+ */
+private ArrayList<JMember> interfaceBody():
+{
+    ArrayList<String> mods = null;
+    JMember aMember        = null;
+    ArrayList<JMember> members = new ArrayList<JMember>();
+}
+{
+    try {
+        <LCURLY>
+        (
+            mods = modifiers()
+            aMember = memberDecl(mods)
+            { members.add(aMember); }
+        )*
+        <RCURLY>
+    } catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return members; }
+}
+
+/**
+ * Parses a member declaration and returns an AST for it.
+ *
+ * <pre>
+ *   interfaceMemberDecl ::= (VOID | type) IDENTIFIER formalParameters
+ *                               [ THROWS qualifiedIdentifier { COMMA qualifiedIdentifier } ] SEMI
+ *                          | type variableDeclarators SEMI
+ * </pre>
+ *
+ * @param mods the class member modifiers.
+ * @return an AST for a member declaration.
+ */
+private JMember interfaceMemberDecl(ArrayList<String> mods):
+{
+    int line = 0;
+    Type type = null;
+    String name = "";
+    ArrayList<JFormalParameter> params = null;
+    JBlock body = null;
+    ArrayList<JVariableDeclarator> variableDeclarators = null;
+    JMember memberDecl = null;
+    Type exception = null;
+    ArrayList<Type> exceptions = new ArrayList<Type>();
+}
+{
+    try {
         LOOKAHEAD((<VOID> | type()) <IDENTIFIER> <LPAREN>)
         (
             (
@@ -542,7 +701,12 @@ private JMember memberDecl(ArrayList<String> mods):
                 body = block() |
                 <SEMI>
             )
-            { memberDecl = new JMethodDeclaration(line, mods, name, type, params, body); }
+            [
+                <THROWS>
+                exception = qualifiedIdentifier() { exceptions.add(exception); }
+                ( exception = qualifiedIdentifier() { exceptions.add(exception); } )*
+            ]
+            { memberDecl = new JMethodDeclaration(line, mods, name, type, params, body, exceptions); }
         ) |
         (
             type = type()
@@ -677,6 +841,55 @@ private JStatement statement():
         <SEMI>
         { statement = new JBreakStatement(line); } |
 
+        <CONTINUE>
+        { line = token.beginLine; }
+        <SEMI>
+        { statement = new JContinueStatement(line); } |
+
+        <DO>
+        { line = token.beginLine; }
+        body = statement()
+        <WHILE>
+        expr = parExpression()
+        <SEMI>
+        { statement = new JDoStatement(line, body, expr); } |
+
+        <THROW>
+        { line = token.beginLine; }
+        expr = expression()
+        <SEMI>
+        { statement = new JThrowStatement(line, expr); } |
+
+        <TRY>
+        { line = token.beginLine; }
+        tryBlock = block()
+        (
+            <CATCH> <LPAREN>
+            aParameter = formalParameter()
+            { parameters.add(aParameter); }
+            <RPAREN>
+            aCatchBlock = block()
+            { catchBlocks.add(aCatchBlock); }
+        )*
+
+        [
+            <FINALLY>
+            finBlock = block()
+        ]
+        { return new JTryStatement(line, tryBlock, parameters, catchBlocks, finBlock); } |
+
+        <FOR>
+        <LPAREN>
+        { line = token.beginLine; }
+        [ forInit = forInit(line) ]
+        <SEMI>
+        [ expr = expression() ]
+        <SEMI>
+        [ forUpdate = forUpdate(line) ]
+        <RPAREN>
+        body = statement()
+        { statement = new JForStatement(line, forInit, expr, forUpdate, body); } |
+
         <WHILE>
         { line = token.beginLine; }
         test = parExpression()
@@ -798,6 +1011,75 @@ private JExpression parExpression():
     }
     { return expr; }
 }
+
+/**
+ * Parses a forInit statement and returns an AST for it.
+ *
+ * <pre>
+ *   forInit ::= statementExpression { COMMA statementExpression }
+ *             | type variableDeclarators
+ * </pre>
+ *
+ * @return an AST for a forInit expression.
+ */
+ArrayList<JStatement> forInit(int line):
+{
+    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+    JStatement aStatement = null;
+
+    ArrayList <JVariableDeclarator> declarators = new ArrayList<JVariableDeclarator>();
+
+    Type type = null;
+}
+{
+    try {
+        aStatement = statement()
+        { statements.add(aStatement); }
+        (
+            <COMMA>
+            aStatement = statement()
+            { statements.add(aStatement); }
+        )* |
+        type = type()
+        declarators = variableDeclarators(type)
+        { statements.add(new JVariableDeclaration(line, declarators)); }
+
+    } catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return statements; }
+}
+
+/**
+ * Parses a forUpdate statement and returns an AST for it.
+ *
+ * <pre>
+ *   forUpdate ::= statementExpression { COMMA statementExpression }
+ * </pre>
+ *
+ * @return an AST for a forUpdate expression.
+ */
+ArrayList<JStatement> forUpdate(int line):
+{
+    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+    JStatement aStatement = null;
+}
+{
+    try {
+        aStatement = statementExpression()
+        { statements.add(aStatement); }
+        (
+            <COMMA>
+            aStatement = statementExpression()
+            { statements.add(aStatement); }
+        )*
+
+    } catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return statements; }
+}
+
 
 /**
  * Parses a switchBlockStatementGroup and returns an AST for it.

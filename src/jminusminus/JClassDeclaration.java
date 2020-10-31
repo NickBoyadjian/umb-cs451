@@ -247,7 +247,7 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         if (context != null) {
             context.toJSON(e);
         }
-        if (this.interfaces != null) {
+        if (this.interfaces != null && this.interfaces.size() > 0) {
             ArrayList<String> value = new ArrayList<String>();
             interfaces.forEach(inter -> value.add("\"" + inter.toString() + "\""));
             e.addAttribute("implements", value);
