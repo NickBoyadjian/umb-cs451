@@ -108,38 +108,22 @@ SKIP: { <END_COMMENT: "\n" | "\r" | "\r\n">: DEFAULT }
 <IN_SINGLE_LINE_COMMENT>
 SKIP: { <COMMENT: ~[]> }
 
-// Multi line comment -- ignored
-SKIP: { <BEGIN_M_COMMENT: "/*">: IN_MULTI_LINE_COMMENT }
-<IN_MULTI_LINE_COMMENT>
-SKIP: { <END_M_COMMENT: "*/">: DEFAULT }
-<IN_MULTI_LINE_COMMENT>
-SKIP: { <MCOMMENT: ~[]> }
-
 // Reserved words
 TOKEN: {
   <ABSTRACT: "abstract">
 | <BOOLEAN: "boolean">
-| <BREAK: "break">
-| <CASE: "case">
 | <CATCH: "catch">
-| <CONTINUE: "continue">
 | <CHAR: "char">
 | <CLASS: "class">
-| <DEFLT: "default">
-| <DO: "do">
-| <DOUBLE: "double">
 | <ELSE: "else">
 | <EXTENDS: "extends">
 | <FALSE: "false">
-| <FINALLY: "finally">
-| <FOR: "for">
 | <IF: "if">
 | <IMPORT: "import">
-| <IMPLEMENTS: "implements">
-| <INTERFACE: "interface">
 | <INSTANCEOF: "instanceof">
 | <INT: "int">
 | <LONG: "long">
+| <DOUBLE: "double">
 | <NEW: "new">
 | <NULL: "null">
 | <PACKAGE: "package">
@@ -149,7 +133,6 @@ TOKEN: {
 | <RETURN: "return">
 | <STATIC: "static">
 | <SUPER: "super">
-| <SWITCH: "switch">
 | <THIS: "this">
 | <THROW: "throw">
 | <THROWS: "throws">
@@ -219,21 +202,21 @@ TOKEN: {
 | <#LETTER: [ "a"-"z", "A"-"Z" ]>
 | <#DIGIT: [ "0"-"9" ]>
 | <#DIGITS: (<DIGIT>)+>
-| <#SUFFIX: ["d", "D"]>
-| <#EXPONENT: ["e" , "E"] ([ "+" , "-" ])? <DIGITS> >
+| <#SUFFIX: ("d" | "D")>
+| <#EXPONENT: ("e" | "E") ( "+" | "-" )? <DIGITS> >
 }
 
 // Literals
 TOKEN: {
-  <INT_LITERAL: <DIGITS>>
-| <CHAR_LITERAL: "'" ( <ESC> | ~[ "'", "\\", "\n", "\r" ]) "'">
+  <INT_LITERAL: <DIGIT> ( <DIGIT> )*>
+| <LONG_LITERAL: <DIGITS> ( "L" | "l" ) >
 | <DOUBLE_LITERAL:
     <DIGITS> "." (<DIGITS>)? (<EXPONENT>)? (<SUFFIX>)?
- |  "." <DIGITS> (<EXPONENT>) (<SUFFIX>)?
+ |  "." <DIGITS> (<EXPONENT>)? (<SUFFIX>)?
  |  <DIGITS> <EXPONENT> (<SUFFIX>)?
  |  <DIGITS> (<EXPONENT>)? <SUFFIX>>
+| <CHAR_LITERAL: "'" ( <ESC> | ~[ "'", "\\", "\n", "\r" ]) "'">
 | <STRING_LITERAL: "\"" ( <ESC> | ~[ "\"", "\\", "\n", "\r" ] )* "\"">
-| <LONG_LITERAL: <DIGITS> ( "L" | "l" ) >
 | <#ESC: "\\" [ "n", "t", "b", "r", "f", "\\", "'", "\"" ]>
 }
 
@@ -423,7 +406,7 @@ private ArrayList<String> modifiers():
                     reportParserError("Repeated modifier: abstract");
                 }
                 scannedABSTRACT = true;
-            } 
+            }
         )*
     } catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
@@ -544,7 +527,7 @@ private JMember memberDecl(ArrayList<String> mods):
             { line = token.beginLine; }
             <IDENTIFIER>
             { name = token.image; }
-            params = formalParameters() 
+            params = formalParameters()
             (
                 body = block() |
                 <SEMI>
@@ -624,11 +607,9 @@ private JStatement blockStatement():
  *
  * <pre>
  *   statement ::= block
- *               | BREAK SEMI
  *               | IF parExpression statement [ ELSE statement ]
  *               | RETURN [ expression ] SEMI
  *               | SEMI
- *               | SWITCH parExpression LCURLY { switchBlockStatementGroup } RCURLY
  *               | WHILE parExpression statement
  *               | statementExpression SEMI
  * </pre>
@@ -644,11 +625,6 @@ private JStatement statement():
     JStatement alternate  = null;
     JStatement body       = null;
     JExpression expr      = null;
-    JSwitchBlockStatementGroup aGroup = null;
-    ArrayList<JSwitchBlockStatementGroup> switchStatements = new ArrayList<JSwitchBlockStatementGroup>();
-
-    ArrayList<JStatement> forInit = new ArrayList<JStatement>();
-    ArrayList<JStatement> forUpdate = new ArrayList<JStatement>();
 }
 {
     try {
@@ -670,47 +646,6 @@ private JStatement statement():
         test = parExpression()
         body = statement()
         { statement = new JWhileStatement(line, test, body); } |
-
-        <BREAK>
-        { line = token.beginLine; }
-        <SEMI>
-        { statement = new JBreakStatement(line); } |
-
-        <DO>
-        { line = token.beginLine; }
-        body = statement()
-        expr = parExpression()
-        <SEMI>
-        { statement = new JDoStatement(line, body, expr); } |
-
-        <FOR>
-        <LPAREN>
-        { line = token.beginLine; }
-        [ forInit = forInit(line) ]
-        <SEMI>
-        [ expr = expression() ]
-        <SEMI>
-        [ forUpdate = forUpdate(line) ]
-        <RPAREN>
-        body = statement()
-        { statement = new JForStatement(line, forInit, expr, forUpdate, body); } |
-
-        <CONTINUE>
-        { line = token.beginLine; }
-        <SEMI>
-        { statement = new JContinueStatement(line); } |
-
-        <SWITCH>
-        { line = token.beginLine;  }
-        expr = parExpression()
-        <LCURLY>
-        (
-            aGroup = switchBlockStatementGroup()
-            { switchStatements.add(aGroup); }
-        )*
-        <RCURLY>
-        { statement = new JSwitchStatement(line, expr, switchStatements); } |
-
         <RETURN>
         { line = token.beginLine; }
         [
@@ -810,136 +745,6 @@ private JExpression parExpression():
         <LPAREN>
         expr = expression()
         <RPAREN>
-    } catch (ParseException e) {
-        recoverFromError(new int[] { SEMI, EOF }, e);
-    }
-    { return expr; }
-}
-
-/**
- * Parses a forInit statement and returns an AST for it.
- *
- * <pre>
- *   forInit ::= statementExpression { COMMA statementExpression }
- *             | type variableDeclarators
- * </pre>
- *
- * @return an AST for a parenthesized expression.
- */
-ArrayList<JStatement> forInit(int line):
-{
-    ArrayList<JStatement> statements = new ArrayList<JStatement>();
-    JStatement aStatement = null;
-    Type type = null;
-}
-{
-    try {
-        (basicType() | referenceType())
-        { statements.add(new JVariableDeclaration(line, variableDeclarators(type()))); } |
-
-        aStatement = statement()
-        { statements.add(aStatement); }
-        (
-            <COMMA>
-            aStatement = statement()
-            { statements.add(aStatement); }
-        )*
-
-    } catch (ParseException e) {
-        recoverFromError(new int[] { SEMI, EOF }, e);
-    }
-    { return statements; }
-}
-
-/**
- * Parses a forBody statement and returns an AST for it.
- *
- * <pre>
- *   forInit ::= statementExpression { COMMA statementExpression }
- * </pre>
- *
- * @return an AST for a parenthesized expression.
- */
-ArrayList<JStatement> forUpdate(int line):
-{
-    ArrayList<JStatement> statements = new ArrayList<JStatement>();
-    JStatement aStatement = null;
-}
-{
-    try {
-        aStatement = statement()
-        { statements.add(aStatement); }
-        (
-            <COMMA>
-            aStatement = statement()
-            { statements.add(aStatement); }
-        )*
-
-    } catch (ParseException e) {
-        recoverFromError(new int[] { SEMI, EOF }, e);
-    }
-    { return statements; }
-}
-
-/**
- * Parses a switchBlockStatementGroup and returns an AST for it.
- *
- * <pre>
- *   switchBlockStatementGroup ::= switchLabel { switchLabel } { blockStatement }
- * </pre>
- *
- * @return an AST for a switchBlockStatementGroup.
- */
-private JSwitchBlockStatementGroup switchBlockStatementGroup():
-{
-    int line = 0;
-    ArrayList<JExpression> labels = new ArrayList<JExpression>();
-    ArrayList<JStatement> statements = new ArrayList<JStatement>();
-    JExpression aLabel = null;
-    JStatement aStatement = null;
-}
-{
-    try {
-        { line = token.beginLine; }
-        aLabel = expression()
-        { labels.add(aLabel); }
-        (
-            aLabel = expression()
-            { labels.add(aLabel); }
-        )*
-
-        aStatement = statement()
-        { statements.add(aStatement); }
-        (
-            aStatement = expression()
-            { statements.add(aStatement); }
-        )*
-    } catch (ParseException e) {
-        recoverFromError(new int[] { SEMI, EOF }, e);
-    }
-    { return new JSwitchBlockStatementGroup(line, labels, statements); }
-}
-
-/**
- * Parses a switchLabel and returns an AST for it.
- *
- * <pre>
- *   switchLabel ::= CASE expression COLON
-                   | DEFAULT COLON
- * </pre>
- *
- * @return an AST for a switchLabel.
- */
-private JExpression switchLabel():
-{
-    JExpression expr = null;
-}
-{
-    try {
-        <CASE>
-        expr = expression()
-        <COLON> |
-        <DEFLT> <COLON>
     } catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
     }
@@ -1173,7 +978,11 @@ private Type basicType():
         <CHAR>
         { type = Type.CHAR; } |
         <INT>
-        { type = Type.INT; }
+        { type = Type.INT; } |
+        <LONG>
+        { type = Type.LONG; } |
+        <DOUBLE>
+        { type = Type.DOUBLE; }
     } catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
     }
@@ -1240,10 +1049,12 @@ private JStatement statementExpression():
             line = expr.line();
             if (expr instanceof JAssignment
              || expr instanceof JPreIncrementOp
+             || expr instanceof JPostIncrementOp
+             || expr instanceof JPreDecrementOp
              || expr instanceof JPostDecrementOp
              || expr instanceof JMessageExpression
              || expr instanceof JSuperConstruction
-             || expr instanceof JThisConstruction 
+             || expr instanceof JThisConstruction
              || expr instanceof JNewOp
              || expr instanceof JNewArrayOp) {
                 // So as not to save on stack
@@ -1332,13 +1143,13 @@ private JExpression assignmentExpression():
             { lhs = new JAndAssignOp(line, lhs, rhs); } |
             <ALSHIFT_ASSIGN>
             rhs = assignmentExpression()
-            { lhs = new JALeftShiftOp(line, lhs, rhs); } |
+            { lhs = new JALeftShiftAssignOp(line, lhs, rhs); } |
             <ARSHIFT_ASSIGN>
             rhs = assignmentExpression()
-            { lhs = new JARightShiftOp(line, lhs, rhs); } |
+            { lhs = new JARightShiftAssignOp(line, lhs, rhs); } |
             <LRSHIFT_ASSIGN>
             rhs = assignmentExpression()
-            { lhs = new JLRightShiftOp(line, lhs, rhs); }
+            { lhs = new JLRightShiftAssignOp(line, lhs, rhs); }
         ]
     } catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
@@ -1449,7 +1260,7 @@ private JExpression conditionalAndExpression():
  *                              { OR exclusiveOrExpression }
  * </pre>
  *
- * @return an AST for an equality expression.
+ * @return an AST for an inclusiveOrExpression expression.
  */
 private JExpression inclusiveOrExpression():
 {
@@ -1479,7 +1290,7 @@ private JExpression inclusiveOrExpression():
  *                              { XOR andExpression }
  * </pre>
  *
- * @return an AST for an equality expression.
+ * @return an AST for an exclusiveOrExpression expression.
  */
 private JExpression exclusiveOrExpression():
 {
@@ -1509,7 +1320,7 @@ private JExpression exclusiveOrExpression():
  *                              { AND equalityExpression }
  * </pre>
  *
- * @return an AST for an equality expression.
+ * @return an AST for an andExpression expression.
  */
 private JExpression andExpression():
 {
@@ -1649,7 +1460,7 @@ private JExpression shiftExpression():
  *
  * <pre>
  *   additiveExpression ::= multiplicativeExpression
- *                              { MINUS multiplicativeExpression }
+ *                              { ( MINUS | PLUS ) multiplicativeExpression }
  * </pre>
  *
  * @return an AST for an additive expression.
@@ -1760,7 +1571,6 @@ private JExpression unaryExpression():
  *
  * <pre>
  *   simpleUnaryExpression ::= LNOT unaryExpression
-                             | NOT unaryExpression
  *                           | LPAREN basicType RPAREN unaryExpression
  *                           | LPAREN referenceType RPAREN simpleUnaryExpression
  *                           | postfixExpression
@@ -1780,10 +1590,6 @@ private JExpression simpleUnaryExpression():
         { line = token.beginLine; }
         unaryExpr = unaryExpression()
         { expr = new JLogicalNotOp(line, unaryExpr); } |
-        <NOT>
-        { line = token.beginLine; }
-        unaryExpr = unaryExpression()
-        { expr = new JComplementOp(line, unaryExpr); } |
         LOOKAHEAD(<LPAREN> basicType() <RPAREN>)
         <LPAREN>
         { line = token.beginLine; }
@@ -1809,14 +1615,14 @@ private JExpression simpleUnaryExpression():
  * Parses a postfix expression and returns an AST for it.
  *
  * <pre>
- *   postfixExpression ::= primary { selector } { DEC }
+ *   postfixExpression ::= primary { selector } { DEC | INC }
  * </pre>
  *
  * @return an AST for a postfix expression.
  */
 private JExpression postfixExpression():
 {
-    int line = 0; 
+    int line = 0;
     JExpression primaryExpr = null;
 }
 {
@@ -1828,7 +1634,9 @@ private JExpression postfixExpression():
         )*
         (
             <DEC>
-            { primaryExpr = new JPostDecrementOp(line, primaryExpr); }
+            { primaryExpr = new JPostDecrementOp(line, primaryExpr); } |
+            <INC>
+            { primaryExpr = new JPostIncrementOp(line, primaryExpr); }
         )*
     } catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
@@ -2027,7 +1835,7 @@ private JNewArrayOp newArrayDeclarator(Type type):
     try {
         <LBRACK>
         { line = token.beginLine; }
-        expr = expression() 
+        expr = expression()
         {
             dimensions.add(expr);
             type = new ArrayTypeName(type);
@@ -2058,7 +1866,7 @@ private JNewArrayOp newArrayDeclarator(Type type):
  * Parses a literal and returns an AST for it.
  *
  * <pre>
- *   literal ::= CHAR_LITERAL | FALSE | INT_LITERAL | DOUBLE_LITERAL | LONG_LITERAL | NULL | STRING_LITERAL | TRUE
+ *   literal ::= CHAR_LITERAL | FALSE | INT_LITERAL | NULL | STRING_LITERAL | TRUE
  * </pre>
  *
  * @return an AST for a literal.
@@ -2071,10 +1879,10 @@ private JExpression literal():
     try {
         <INT_LITERAL>
         { expr = new JLiteralInt(token.beginLine, token.image); } |
-        <DOUBLE_LITERAL>
-        { expr = new JLiteralDouble(token.beginLine, token.image); } |
         <LONG_LITERAL>
         { expr = new JLiteralLong(token.beginLine, token.image); } |
+        <DOUBLE_LITERAL>
+        { expr = new JLiteralDouble(token.beginLine, token.image); } |
         <CHAR_LITERAL>
         { expr = new JLiteralChar(token.beginLine, token.image); } |
         <STRING_LITERAL>

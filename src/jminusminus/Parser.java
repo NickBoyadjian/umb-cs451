@@ -263,7 +263,7 @@ public class Parser {
      * Parses an interface body and returns a list of members in the body.
      *
      * <pre>
-     *   classBody ::= LCURLY { modifiers interfaceMemberDecl } RCURLY
+     *   interfaceBody ::= LCURLY { modifiers interfaceMemberDecl } RCURLY
      * </pre>
      *
      * @return a list of members in the class body.

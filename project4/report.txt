@@ -1,12 +1,12 @@
 1. Enter the number of hours it took you to complete the project between
    the <<< and >>> signs below (eg, <<<10>>>).
 
-   <<< >>>
+   <<< 6 >>>
    
 2. Enter the difficulty level (1: very easy; 5: very difficult) of the project
    between the <<< and >>> signs below (eg, <<<3>>>).
 
-   <<< >>>
+   <<< 4 >>>
 
 3. Provide a short description of how you approached each problem, issues you 
    encountered, and how you resolved those issues.
@@ -14,45 +14,137 @@
    Part I (Additions to JavaCC Scanner)
 
    Problem 1 (Multiline Comment): ...
+   Before I started writing anything for this homework assignment, I started by looking
+   through the j--.jj file to get an understanding of where things were. This was my first
+   time using javacc so I wasn't totally sure about everything. The first thing I did was
+   look at how single line comments were implemented. I more or less copied this over and
+   just changed the start and end symbols to be "/*" and "*/" respectively.
 
    Problem 2 (Reserved Words): ...
+   This problem was the most straight forward. I went to the part of the file with all the
+   reserved words and just added the new ones into the list.
 
    Problem 3 (Operators): ...
+   Similar to the last problem, the only difference was that I was adding these symbols
+   to the operator section of the javacc file.
 
    Problem 4 (Literals): ...
+   This problem proved to be a little more difficult than the ones before. I started
+   by adding a "digits" type so that I could clean up the int, long, and double implementations.
+   I ended up looking online on how to deal with having multiple digits, and I
+   accomplished this by wrapping <DIGIT> with paranthesis and adding a plus at the end.
+   I then went ahead in implementing Longs as I figured they would be easier. All I had to do
+   was use my DIGITS type and check for an 'l' or and 'L' afterwards.
+
+   When I started working on the double type, I immidietely got stuck. I tried using square
+   brackets to denote optional types which didn't end up working. After doing some research
+   I found out you can just put a question mark after the optional part. From here I made the
+   suffix and exponent type and built out all the ways that a double can be written.
 
    Part II (Additions to JavaCC Parser)
    
    Problem 5 (Long and Double Basic Types): ...
+   For this problem I went to the literals part of the parser and looked at how all the
+   other types were defined. All I needed to do was check for <LONG_LITERAL> and
+   <DOUBLE_LITERAL> and return the appropriate J class with the line and image.
 
    Problem 6 (Operators): ...
+   This problem had me moving a bit around the file. From the last homework I was pretty comfortable
+   working through the appendix of the homework pdf and seeing where everything needed to go.
+   It was the same as homework 3 in terms of organization, the only difference was the implementation
+   of the code. I didn't have too much difficulty here because I could more or less copy what was
+   already there and make the changes that were needed. For example, when I was doing the remainder
+   assignment, I looked at the addition assignment to understand how it worked. All that needed
+   to be changed was the symbol and the returning class. This pretty much held true for all the
+   additions I made to the file.
    
    Problem 7 (Conditional Expression): ...
+   This first thing I did here was create the conditionalExpression function and link it up
+   properly to the other functions as shown in the appendix. This was the part that I got stuck on
+   in the previous homework. Some of the return types in other functions needed to be changed
+   to match the new design in the appendix. I modeled the function just like I did in the
+   handwritten parser. I created three JExpressions: condition, trueBranch, and falseBranch.
+   From here I read in a conditionalOrExpression, checked for a question mark, read the
+   trueBranch, checked for a colon, and then lastly read false branch. Then I simply returned
+   a JConditionalExpression with the variables I created.
 
    Problem 8 (Switch Statement): ...
+   Implementing a switch statement required appending to the statement function. I had
+   to add some variables to the top: a switch block statement group, and a list of them. From here
+   I added a new branch in the try block. This problem was when I really solidified my comfort
+   working with javacc. I created the Kleene closure to read in the variable amount of switch
+   block statement groups and then returned the class.
 
    Problem 9 (Do-While Statement): ...
+   This problem was simpler than the last. All I had to do was check for the DO keyword, then
+   read in a statement and store it in the body, read in a parenthesized expression, check for a
+   semi colon, and then return the JDoStatement object.
 
    Problem 10 (For Statement): ...
+   The for statement required adding more parsers to the file. The first thing I
+   did was write the forInit and forUpdate functions. The init function had to return
+   a list of JStatements so I created an array list that would store either a variable amount
+   of statementExpressions, or a single variableDeclarators. This required me to check for
+   reference types or basic types which proved to be so much cleaner than in the handwritten
+   parser. All I had to write was: (basicType() | referenceType()).
+
+   Then I wrote the forUpdate which was just at minimum one statementExpression. I created the
+   ArrayList and then used the pattern for getting at least one of some type.
+         aStatement = statement()
+        { statements.add(aStatement); }
+        (
+            <COMMA>
+            aStatement = statement()
+            { statements.add(aStatement); }
+        )*
+   I think this looked better in the handwritten parse because you can use a do while loop
+   to avoid the repeating code. There may be a better way to do this in javacc but I wasn't
+   able to figure anything out.
+
 
    Problem 11 (Break Statement): ...
+   This was one of the easier problem in the assignment. You simply had to add another
+   branch to the statement function that checks for the break keyword followed by a semi colon.
 
    Problem 12 (Continue Statement): ...
+   This problem was the same as the break statement, you just need to check for the continue
+   keyword and then return the continue class instead of the break one.
 
    Problem 13 (Exception Handlers): ...
+   This was one of the more tedious problems. I started by writting out the sections in the
+   statement function to handle the try and the throw. From here I modified the memberDecl
+   function to handle methods that can throw exceptions. This was more tedious than anything
+   because the code we had to add wasn't anything complex, it was just a matter of putting
+   it in the right place within the structure. I also had to add the array lists to store
+   all the exception types but this was similar to what I did in the previous problems.
 
    Problem 14 (Interface Type Declaration): ...
+   The first thing I did for this problem was modify the typeDeclaration function to handle
+   interfaces as well as classes. I had to use the LOOKAHEAD function here to determine if
+   the class or interface keyword was found, and then construct the right type of declaration.
+
+   Next I went ahead and wrote the code for the interfaceDeclaration function, putting in the
+   interfaceBody and memberDecl functions before writting them. I copied over the code from the
+   class Declaration as it was essentially the same, just with fewer parts. The interface body
+   I completely copied from class body and only changed the type from memberDecl to
+   interfaceMemberDecl. The last thing I had to do was add the interfaceMemberDecl function.
+   This as well was like the class version, just with fewer parts, so I copied over the code
+   and removed the unneccesary parts.
 
 4. Did you receive help from anyone? List their names, status (classmate, 
    CS451/651 grad, TA, other), and the nature of help received.
 
+   No. I just looked up how to do the optional types on stack overflow.
+   https://stackoverflow.com/questions/44376489/javacc-how-to-parse-characters-that-may-not-be-exist
+
    Name               Status       Help Received
    ----               ------       -------------
-
    ...                ...          ...
 
 5. List any other comments here. Feel free to provide any feedback on how
    much you learned from doing the assignment, and whether you enjoyed
    doing it.
 
-   ...
+I definitely feel good working with javacc after going through all these problems.
+This homework encompassed the last two homeworks and I was able to finish it in a day
+and a half. It was way better than writting all this stuff out by hand.
