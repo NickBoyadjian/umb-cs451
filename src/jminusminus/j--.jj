@@ -112,18 +112,27 @@ SKIP: { <COMMENT: ~[]> }
 TOKEN: {
   <ABSTRACT: "abstract">
 | <BOOLEAN: "boolean">
+| <BREAK: "break">
+| <CASE: "case">
 | <CATCH: "catch">
+| <CONTINUE: "continue">
 | <CHAR: "char">
 | <CLASS: "class">
+| <DEFLT: "default">
+| <DO: "do">
+| <DOUBLE: "double">
 | <ELSE: "else">
 | <EXTENDS: "extends">
 | <FALSE: "false">
+| <FINALLY: "finally">
+| <FOR: "for">
 | <IF: "if">
 | <IMPORT: "import">
+| <IMPLEMENTS: "implements">
+| <INTERFACE: "interface">
 | <INSTANCEOF: "instanceof">
 | <INT: "int">
 | <LONG: "long">
-| <DOUBLE: "double">
 | <NEW: "new">
 | <NULL: "null">
 | <PACKAGE: "package">
@@ -133,6 +142,7 @@ TOKEN: {
 | <RETURN: "return">
 | <STATIC: "static">
 | <SUPER: "super">
+| <SWITCH: "switch">
 | <THIS: "this">
 | <THROW: "throw">
 | <THROWS: "throws">
@@ -607,9 +617,16 @@ private JStatement blockStatement():
  *
  * <pre>
  *   statement ::= block
+ *               | BREAK SEMI
  *               | IF parExpression statement [ ELSE statement ]
  *               | RETURN [ expression ] SEMI
  *               | SEMI
+ *               | FOR LPAREN [ forInit ] SEMI [ expression ] SEMI [ forUpdate ] RPAREN statement
+ *               | THROW expression SEMI
+ *               | TRY block
+ *                  { CATCH LPAREN formalParameter RPAREN block }
+ *                      [ FINALLY block ]
+ *               | SWITCH parExpression LCURLY { switchBlockStatementGroup } RCURLY
  *               | WHILE parExpression statement
  *               | statementExpression SEMI
  * </pre>
@@ -625,6 +642,19 @@ private JStatement statement():
     JStatement alternate  = null;
     JStatement body       = null;
     JExpression expr      = null;
+
+    JSwitchBlockStatementGroup aGroup = null;
+    ArrayList<JSwitchBlockStatementGroup> switchStatements = new ArrayList<JSwitchBlockStatementGroup>();
+
+    JBlock tryBlock   = null;
+    JBlock finBlock   = null;
+    JFormalParameter aParameter = null;
+    ArrayList<JFormalParameter> parameters = new ArrayList<>();
+    JBlock aCatchBlock = null;
+    ArrayList<JBlock> catchBlocks = new ArrayList<>();
+
+    ArrayList<JStatement> forInit = new ArrayList<JStatement>();
+    ArrayList<JStatement> forUpdate = new ArrayList<JStatement>();
 }
 {
     try {
@@ -641,11 +671,29 @@ private JStatement statement():
             alternate = statement()
         ]
         { statement = new JIfStatement(line, test, consequent, alternate); } |
+
+        <BREAK>
+        { line = token.beginLine; }
+        <SEMI>
+        { statement = new JBreakStatement(line); } |
+
         <WHILE>
         { line = token.beginLine; }
         test = parExpression()
         body = statement()
         { statement = new JWhileStatement(line, test, body); } |
+
+        <SWITCH>
+        { line = token.beginLine;  }
+        expr = parExpression()
+        <LCURLY>
+        (
+            aGroup = switchBlockStatementGroup()
+            { switchStatements.add(aGroup); }
+        )*
+        <RCURLY>
+        { statement = new JSwitchStatement(line, expr, switchStatements); } |
+
         <RETURN>
         { line = token.beginLine; }
         [
@@ -745,6 +793,69 @@ private JExpression parExpression():
         <LPAREN>
         expr = expression()
         <RPAREN>
+    } catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return expr; }
+}
+
+/**
+ * Parses a switchBlockStatementGroup and returns an AST for it.
+ *
+ * <pre>
+ *   switchBlockStatementGroup ::= switchLabel { switchLabel } { blockStatement }
+ * </pre>
+ *
+ * @return an AST for a switchBlockStatementGroup.
+ */
+private JSwitchBlockStatementGroup switchBlockStatementGroup():
+{
+    int line = 0;
+    ArrayList<JExpression> labels = new ArrayList<JExpression>();
+    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+    JExpression aLabel = null;
+    JStatement aStatement = null;
+}
+{
+    try {
+        { line = token.beginLine; }
+        aLabel = switchLabel()
+        { labels.add(aLabel); }
+        (
+            aLabel = switchLabel()
+            { labels.add(aLabel); }
+        )*
+
+        (
+            aStatement = blockStatement()
+            { statements.add(aStatement); }
+        )*
+    } catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return new JSwitchBlockStatementGroup(line, labels, statements); }
+}
+
+/**
+ * Parses a switchLabel and returns an AST for it.
+ *
+ * <pre>
+ *   switchLabel ::= CASE expression COLON
+                   | DEFAULT COLON
+ * </pre>
+ *
+ * @return an AST for a switchLabel.
+ */
+private JExpression switchLabel():
+{
+    JExpression expr = null;
+}
+{
+    try {
+        <CASE>
+        expr = expression()
+        <COLON> |
+        <DEFLT> <COLON>
     } catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
     }

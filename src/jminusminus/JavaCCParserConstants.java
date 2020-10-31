@@ -21,179 +21,199 @@ public interface JavaCCParserConstants {
   /** RegularExpression Id. */
   int BOOLEAN = 10;
   /** RegularExpression Id. */
-  int CATCH = 11;
+  int BREAK = 11;
   /** RegularExpression Id. */
-  int CHAR = 12;
+  int CASE = 12;
   /** RegularExpression Id. */
-  int CLASS = 13;
+  int CATCH = 13;
   /** RegularExpression Id. */
-  int ELSE = 14;
+  int CONTINUE = 14;
   /** RegularExpression Id. */
-  int EXTENDS = 15;
+  int CHAR = 15;
   /** RegularExpression Id. */
-  int FALSE = 16;
+  int CLASS = 16;
   /** RegularExpression Id. */
-  int IF = 17;
+  int DEFLT = 17;
   /** RegularExpression Id. */
-  int IMPORT = 18;
+  int DO = 18;
   /** RegularExpression Id. */
-  int INSTANCEOF = 19;
+  int DOUBLE = 19;
   /** RegularExpression Id. */
-  int INT = 20;
+  int ELSE = 20;
   /** RegularExpression Id. */
-  int LONG = 21;
+  int EXTENDS = 21;
   /** RegularExpression Id. */
-  int DOUBLE = 22;
+  int FALSE = 22;
   /** RegularExpression Id. */
-  int NEW = 23;
+  int FINALLY = 23;
   /** RegularExpression Id. */
-  int NULL = 24;
+  int FOR = 24;
   /** RegularExpression Id. */
-  int PACKAGE = 25;
+  int IF = 25;
   /** RegularExpression Id. */
-  int PRIVATE = 26;
+  int IMPORT = 26;
   /** RegularExpression Id. */
-  int PROTECTED = 27;
+  int IMPLEMENTS = 27;
   /** RegularExpression Id. */
-  int PUBLIC = 28;
+  int INTERFACE = 28;
   /** RegularExpression Id. */
-  int RETURN = 29;
+  int INSTANCEOF = 29;
   /** RegularExpression Id. */
-  int STATIC = 30;
+  int INT = 30;
   /** RegularExpression Id. */
-  int SUPER = 31;
+  int LONG = 31;
   /** RegularExpression Id. */
-  int THIS = 32;
+  int NEW = 32;
   /** RegularExpression Id. */
-  int THROW = 33;
+  int NULL = 33;
   /** RegularExpression Id. */
-  int THROWS = 34;
+  int PACKAGE = 34;
   /** RegularExpression Id. */
-  int TRUE = 35;
+  int PRIVATE = 35;
   /** RegularExpression Id. */
-  int TRY = 36;
+  int PROTECTED = 36;
   /** RegularExpression Id. */
-  int VOID = 37;
+  int PUBLIC = 37;
   /** RegularExpression Id. */
-  int WHILE = 38;
+  int RETURN = 38;
   /** RegularExpression Id. */
-  int COMMA = 39;
+  int STATIC = 39;
   /** RegularExpression Id. */
-  int DOT = 40;
+  int SUPER = 40;
   /** RegularExpression Id. */
-  int LBRACK = 41;
+  int SWITCH = 41;
   /** RegularExpression Id. */
-  int LCURLY = 42;
+  int THIS = 42;
   /** RegularExpression Id. */
-  int LPAREN = 43;
+  int THROW = 43;
   /** RegularExpression Id. */
-  int RPAREN = 44;
+  int THROWS = 44;
   /** RegularExpression Id. */
-  int RBRACK = 45;
+  int TRUE = 45;
   /** RegularExpression Id. */
-  int RCURLY = 46;
+  int TRY = 46;
   /** RegularExpression Id. */
-  int SEMI = 47;
+  int VOID = 47;
   /** RegularExpression Id. */
-  int ASSIGN = 48;
+  int WHILE = 48;
   /** RegularExpression Id. */
-  int ALSHIFT = 49;
+  int COMMA = 49;
   /** RegularExpression Id. */
-  int ALSHIFT_ASSIGN = 50;
+  int DOT = 50;
   /** RegularExpression Id. */
-  int AND = 51;
+  int LBRACK = 51;
   /** RegularExpression Id. */
-  int AND_ASSIGN = 52;
+  int LCURLY = 52;
   /** RegularExpression Id. */
-  int ARSHIFT = 53;
+  int LPAREN = 53;
   /** RegularExpression Id. */
-  int ARSHIFT_ASSIGN = 54;
+  int RPAREN = 54;
   /** RegularExpression Id. */
-  int COLON = 55;
+  int RBRACK = 55;
   /** RegularExpression Id. */
-  int DEC = 56;
+  int RCURLY = 56;
   /** RegularExpression Id. */
-  int DIV = 57;
+  int SEMI = 57;
   /** RegularExpression Id. */
-  int DIV_ASSIGN = 58;
+  int ASSIGN = 58;
   /** RegularExpression Id. */
-  int EQUAL = 59;
+  int ALSHIFT = 59;
   /** RegularExpression Id. */
-  int GE = 60;
+  int ALSHIFT_ASSIGN = 60;
   /** RegularExpression Id. */
-  int GT = 61;
+  int AND = 61;
   /** RegularExpression Id. */
-  int INC = 62;
+  int AND_ASSIGN = 62;
   /** RegularExpression Id. */
-  int LAND = 63;
+  int ARSHIFT = 63;
   /** RegularExpression Id. */
-  int LE = 64;
+  int ARSHIFT_ASSIGN = 64;
   /** RegularExpression Id. */
-  int LT = 65;
+  int COLON = 65;
   /** RegularExpression Id. */
-  int LNOT = 66;
+  int DEC = 66;
   /** RegularExpression Id. */
-  int LOR = 67;
+  int DIV = 67;
   /** RegularExpression Id. */
-  int LRSHIFT = 68;
+  int DIV_ASSIGN = 68;
   /** RegularExpression Id. */
-  int LRSHIFT_ASSIGN = 69;
+  int EQUAL = 69;
   /** RegularExpression Id. */
-  int MINUS = 70;
+  int GE = 70;
   /** RegularExpression Id. */
-  int MINUS_ASSIGN = 71;
+  int GT = 71;
   /** RegularExpression Id. */
-  int NOT = 72;
+  int INC = 72;
   /** RegularExpression Id. */
-  int NOT_EQUAL = 73;
+  int LAND = 73;
   /** RegularExpression Id. */
-  int OR = 74;
+  int LE = 74;
   /** RegularExpression Id. */
-  int OR_ASSIGN = 75;
+  int LT = 75;
   /** RegularExpression Id. */
-  int PLUS = 76;
+  int LNOT = 76;
   /** RegularExpression Id. */
-  int PLUS_ASSIGN = 77;
+  int LOR = 77;
   /** RegularExpression Id. */
-  int QUESTION = 78;
+  int LRSHIFT = 78;
   /** RegularExpression Id. */
-  int REM = 79;
+  int LRSHIFT_ASSIGN = 79;
   /** RegularExpression Id. */
-  int REM_ASSIGN = 80;
+  int MINUS = 80;
   /** RegularExpression Id. */
-  int STAR = 81;
+  int MINUS_ASSIGN = 81;
   /** RegularExpression Id. */
-  int STAR_ASSIGN = 82;
+  int NOT = 82;
   /** RegularExpression Id. */
-  int XOR = 83;
+  int NOT_EQUAL = 83;
   /** RegularExpression Id. */
-  int XOR_ASSIGN = 84;
+  int OR = 84;
   /** RegularExpression Id. */
-  int IDENTIFIER = 85;
+  int OR_ASSIGN = 85;
   /** RegularExpression Id. */
-  int LETTER = 86;
+  int PLUS = 86;
   /** RegularExpression Id. */
-  int DIGIT = 87;
+  int PLUS_ASSIGN = 87;
   /** RegularExpression Id. */
-  int DIGITS = 88;
+  int QUESTION = 88;
   /** RegularExpression Id. */
-  int SUFFIX = 89;
+  int REM = 89;
   /** RegularExpression Id. */
-  int EXPONENT = 90;
+  int REM_ASSIGN = 90;
   /** RegularExpression Id. */
-  int INT_LITERAL = 91;
+  int STAR = 91;
   /** RegularExpression Id. */
-  int LONG_LITERAL = 92;
+  int STAR_ASSIGN = 92;
   /** RegularExpression Id. */
-  int DOUBLE_LITERAL = 93;
+  int XOR = 93;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 94;
+  int XOR_ASSIGN = 94;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 95;
+  int IDENTIFIER = 95;
   /** RegularExpression Id. */
-  int ESC = 96;
+  int LETTER = 96;
   /** RegularExpression Id. */
-  int ERROR = 97;
+  int DIGIT = 97;
+  /** RegularExpression Id. */
+  int DIGITS = 98;
+  /** RegularExpression Id. */
+  int SUFFIX = 99;
+  /** RegularExpression Id. */
+  int EXPONENT = 100;
+  /** RegularExpression Id. */
+  int INT_LITERAL = 101;
+  /** RegularExpression Id. */
+  int LONG_LITERAL = 102;
+  /** RegularExpression Id. */
+  int DOUBLE_LITERAL = 103;
+  /** RegularExpression Id. */
+  int CHAR_LITERAL = 104;
+  /** RegularExpression Id. */
+  int STRING_LITERAL = 105;
+  /** RegularExpression Id. */
+  int ESC = 106;
+  /** RegularExpression Id. */
+  int ERROR = 107;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -213,18 +233,27 @@ public interface JavaCCParserConstants {
     "<COMMENT>",
     "\"abstract\"",
     "\"boolean\"",
+    "\"break\"",
+    "\"case\"",
     "\"catch\"",
+    "\"continue\"",
     "\"char\"",
     "\"class\"",
+    "\"default\"",
+    "\"do\"",
+    "\"double\"",
     "\"else\"",
     "\"extends\"",
     "\"false\"",
+    "\"finally\"",
+    "\"for\"",
     "\"if\"",
     "\"import\"",
+    "\"implements\"",
+    "\"interface\"",
     "\"instanceof\"",
     "\"int\"",
     "\"long\"",
-    "\"double\"",
     "\"new\"",
     "\"null\"",
     "\"package\"",
@@ -234,6 +263,7 @@ public interface JavaCCParserConstants {
     "\"return\"",
     "\"static\"",
     "\"super\"",
+    "\"switch\"",
     "\"this\"",
     "\"throw\"",
     "\"throws\"",
