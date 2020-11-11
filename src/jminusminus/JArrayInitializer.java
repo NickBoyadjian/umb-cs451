@@ -76,6 +76,10 @@ class JArrayInitializer extends JExpression {
             // Code to store the initial value in the array.
             if (componentType == Type.INT) {
                 output.addNoArgInstruction(IASTORE);
+            } else if (componentType == Type.LONG) {
+                output.addNoArgInstruction(LASTORE);
+            } else if (componentType == Type.DOUBLE) {
+                output.addNoArgInstruction(DASTORE);
             } else if (componentType == Type.BOOLEAN) {
                 output.addNoArgInstruction(BASTORE);
             } else if (componentType == Type.CHAR) {

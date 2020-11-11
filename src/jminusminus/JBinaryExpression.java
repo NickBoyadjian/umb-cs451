@@ -190,6 +190,10 @@ class JPlusOp extends JBinaryExpression {
             return (new JStringConcatenationOp(line, lhs, rhs)).analyze(context);
         } else if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
             type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else if (lhs.type() == Type.DOUBLE && rhs.type() == Type.DOUBLE) {
+            type = Type.DOUBLE;
         } else {
             type = Type.ANY;
             JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for +");
@@ -203,7 +207,13 @@ class JPlusOp extends JBinaryExpression {
     public void codegen(CLEmitter output) {
         lhs.codegen(output);
         rhs.codegen(output);
-        output.addNoArgInstruction(IADD);
+
+        if (lhs.type() == Type.INT)
+            output.addNoArgInstruction(IADD);
+        else if (lhs.type() == Type.LONG)
+            output.addNoArgInstruction(LADD);
+        else if (lhs.type() == Type.DOUBLE)
+            output.addNoArgInstruction(DADD);
     }
 }
 

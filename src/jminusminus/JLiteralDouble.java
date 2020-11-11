@@ -34,13 +34,13 @@ class JLiteralDouble extends JExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        double i = Double.parseDouble(text);
-        if (i == 0)
+        double d = Double.parseDouble(text);
+        if (d == 0d)
             output.addNoArgInstruction(DCONST_0);
-        else if (i == 1)
+        else if (d == 1d)
             output.addNoArgInstruction(DCONST_1);
         else
-            output.addLDCInstruction(i);
+            output.addLDCInstruction(d);
     }
 
 

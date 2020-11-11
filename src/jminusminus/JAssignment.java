@@ -100,6 +100,12 @@ class JPlusAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
+        }  else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else if (lhs.type().equals(Type.STRING)) {
             rhs = (new JStringConcatenationOp(line, lhs, rhs)).analyze(context);
             type = Type.STRING;
@@ -117,6 +123,14 @@ class JPlusAssignOp extends JAssignment {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
         if (lhs.type().equals(Type.STRING)) {
             rhs.codegen(output);
+        } else if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LADD);
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DADD);
         } else {
             ((JLhs) lhs).codegenLoadLhsRvalue(output);
             rhs.codegen(output);
@@ -158,6 +172,12 @@ class JMinusAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for -=: " + lhs.type());
@@ -170,9 +190,19 @@ class JMinusAssignOp extends JAssignment {
      */
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(ISUB);
+        if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LSUB);
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DSUB);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(ISUB);
+        }
         if (!isStatementExpression) {
             ((JLhs) lhs).codegenDuplicateRvalue(output);
         }
@@ -210,7 +240,13 @@ class JStarAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
-        } else {
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
+        }  else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for *=: " + lhs.type());
         }
@@ -222,9 +258,19 @@ class JStarAssignOp extends JAssignment {
      */
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IMUL);
+        if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LMUL);
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DMUL);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IMUL);
+        }
         if (!isStatementExpression) {
             ((JLhs) lhs).codegenDuplicateRvalue(output);
         }
@@ -261,6 +307,12 @@ class JDivAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for /=: " + lhs.type());
@@ -273,9 +325,19 @@ class JDivAssignOp extends JAssignment {
      */
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IDIV);
+        if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LDIV);
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DDIV);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IDIV);
+        }
         if (!isStatementExpression) {
             ((JLhs) lhs).codegenDuplicateRvalue(output);
         }
@@ -312,7 +374,13 @@ class JRemAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
-        } else {
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
+        }  else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for %=: " + lhs.type());
         }
@@ -324,9 +392,19 @@ class JRemAssignOp extends JAssignment {
      */
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IREM);
+        if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LREM);
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DREM);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IREM);
+        }
         if (!isStatementExpression) {
             ((JLhs) lhs).codegenDuplicateRvalue(output);
         }
@@ -363,6 +441,9 @@ class JOrAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for |=: " + lhs.type());
@@ -375,9 +456,15 @@ class JOrAssignOp extends JAssignment {
      */
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IOR);
+        if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LOR);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IOR);
+        }
         if (!isStatementExpression) {
             ((JLhs) lhs).codegenDuplicateRvalue(output);
         }
@@ -414,6 +501,9 @@ class JAndAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for &=: " + lhs.type());
@@ -426,9 +516,15 @@ class JAndAssignOp extends JAssignment {
      */
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IAND);
+        if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LAND);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IAND);
+        }
         if (!isStatementExpression) {
             ((JLhs) lhs).codegenDuplicateRvalue(output);
         }

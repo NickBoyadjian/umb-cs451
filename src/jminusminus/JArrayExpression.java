@@ -60,6 +60,10 @@ class JArrayExpression extends JExpression implements JLhs {
         indexExpr.codegen(output);
         if (type == Type.INT) {
             output.addNoArgInstruction(IALOAD);
+        } else if (type == Type.LONG) {
+            output.addNoArgInstruction(LALOAD);
+        } else if (type == Type.DOUBLE) {
+            output.addNoArgInstruction(DALOAD);
         } else if (type == Type.BOOLEAN) {
             output.addNoArgInstruction(BALOAD);
         } else if (type == Type.CHAR) {
@@ -100,6 +104,10 @@ class JArrayExpression extends JExpression implements JLhs {
         }
         if (type == Type.INT) {
             output.addNoArgInstruction(IALOAD);
+        } else if (type == Type.LONG) {
+            output.addNoArgInstruction(LALOAD);
+        } else if (type == Type.DOUBLE) {
+            output.addNoArgInstruction(DALOAD);
         } else if (type == Type.BOOLEAN) {
             output.addNoArgInstruction(BALOAD);
         } else if (type == Type.CHAR) {
@@ -122,6 +130,10 @@ class JArrayExpression extends JExpression implements JLhs {
     public void codegenStore(CLEmitter output) {
         if (type == Type.INT) {
             output.addNoArgInstruction(IASTORE);
+        } else if (type == Type.LONG) {
+            output.addNoArgInstruction(LASTORE);
+        } else if (type == Type.DOUBLE) {
+            output.addNoArgInstruction(DASTORE);
         } else if (type == Type.BOOLEAN) {
             output.addNoArgInstruction(BASTORE);
         } else if (type == Type.CHAR) {

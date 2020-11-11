@@ -32,13 +32,14 @@ class JLiteralLong extends JExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        long i = Long.parseLong(text);
-        if (i == 0)
+        int length = text.length();
+        long l = Long.parseLong(text.substring(0, length - 1));
+        if (l == 0L)
             output.addNoArgInstruction(LCONST_0);
-        else if (i == 1)
+        else if (l == 1L)
             output.addNoArgInstruction(LCONST_1);
         else
-            output.addLDCInstruction(i);
+            output.addLDCInstruction(l);
     }
 
 

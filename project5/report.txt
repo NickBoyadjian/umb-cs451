@@ -1,0 +1,74 @@
+1. Enter the number of hours it took you to complete the project between
+   the <<< and >>> signs below (eg, <<<10>>>).
+
+   <<< >>>
+   
+2. Enter the difficulty level (1: very easy; 5: very difficult) of the project
+   between the <<< and >>> signs below (eg, <<<3>>>).
+
+   <<< >>>
+
+3. Provide a short description of how you approached each problem, issues you 
+   encountered, and how you resolved those issues.
+
+   Problem 1 (Long and Double Basic Types):
+   Like all the other homeworks, I started with the Long type first. Looking at the Int class,
+   The analyze function for Longs just needed to change the type from Type.Int to Type.Long.
+
+   The codegen method was where the real change needed to happen. The codegen for Ints basically
+   checked for all the int constants and used the JVM Byte code for them. I looked for the
+   Long versions and found that there were only LCONST_0 and LCONST_1. This meant that I
+   could just use a simple if statement to handle the three cases. If my value was 0L or 1L,
+   I would use the appropriate constant. Otherwise, I would use the addLDCInstruction method
+   and simply pass it the parsed long.
+
+   I noticed an error when I tried to compile the sample file that seemed to be stemming from the
+   parseLong method. After testing out the method with some hard coded values, I realized that I
+   needed to remove the 'l' from the end of the text string. After doing this, the error went away
+   and I hit another road block.
+
+   Now I was getting an error in regards to the method call. My first instinct was to check the
+   JMethodDeclaration file which I didn't find anything. I ended up using piazza for this and I
+   learned that I was supposed to have the type descriptor for longs to be J, and I had for some
+   reason had them set to L. This now fixed my problem and I was able to compile the Literals test
+   file. From here I went to test the BasicTypes file and had a whole new set of errors.
+
+   I commented out the file and went about adding small pieces to see what would work and what wouldn't.
+   One of the first things I tested was created double variables which wasn't working. I checked the
+   JVariable class and saw where it was handling the offset loading of ints. I took this as a template
+   and added the check for longs and doubles and then just changed the appropriate JVM byte code
+   instruction. I could now declare variables of type double and long. Lastly I could see that I
+   needed to extend all the operators to work with doubles and longs so I went ahead and extended all
+   of them to do so.
+
+   Problem 2 (Operators): ...
+   
+   Problem 3 (Conditional Expression): ...
+
+   Problem 4 (Switch Statement): ...
+
+   Problem 5 (Do-While Statement): ...
+
+   Problem 6 (For Statement): ...
+
+   Problem 7 (Break Statement): ...
+
+   Problem 8 (Continue Statement): ...
+
+   Problem 9 (Exception Handlers): ...
+
+   Problem 10 (Interface Type Declaration): ...
+
+4. Did you receive help from anyone? List their names, status (classmate, 
+   CS451/651 grad, TA, other), and the nature of help received.
+
+   Name               Status       Help Received
+   ----               ------       -------------
+
+   ...                ...          ...
+
+5. List any other comments here. Feel free to provide any feedback on how
+   much you learned from doing the assignment, and whether you enjoyed
+   doing it.
+
+   ...

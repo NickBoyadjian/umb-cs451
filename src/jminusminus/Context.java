@@ -298,6 +298,23 @@ class LocalContext extends Context {
     }
 
     /**
+     * Allocates and returns a new offset to handle Long and Double type.
+     *
+     * @return the next allocated offset.
+     */
+    public int nextOffset(Type type) {
+        if (type == Type.DOUBLE || type == Type.LONG) {
+            int originalOffset = offset;
+            offset += 2;
+            return originalOffset;
+        } else {
+            return offset++;
+        }
+    }
+
+
+
+    /**
      * {@inheritDoc}
      */
     public void toJSON(JSONElement json) {

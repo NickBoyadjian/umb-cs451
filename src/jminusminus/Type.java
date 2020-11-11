@@ -643,7 +643,7 @@ class Type {
         return classRep == null ? "V" : classRep == void.class ? "V"
                 : classRep.isArray() ? "[" + descriptorFor(classRep.getComponentType())
                 : classRep.isPrimitive() ? (classRep == int.class ? "I"
-                : classRep == long.class ? "L"
+                : classRep == long.class ? "J"
                 : classRep == double.class ? "D"
                 : classRep == char.class ? "C"
                 : classRep == boolean.class ? "Z" : "?")

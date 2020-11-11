@@ -118,6 +118,42 @@ class JVariable extends JExpression implements JLhs {
                         output.addOneArgInstruction(ALOAD, offset);
                         break;
                 }
+            } else if (type == Type.LONG) {
+                switch (offset) {
+                    case 0:
+                        output.addNoArgInstruction(LLOAD_0);
+                        break;
+                    case 1:
+                        output.addNoArgInstruction(LLOAD_1);
+                        break;
+                    case 2:
+                        output.addNoArgInstruction(LLOAD_2);
+                        break;
+                    case 3:
+                        output.addNoArgInstruction(LLOAD_3);
+                        break;
+                    default:
+                        output.addOneArgInstruction(LLOAD, offset);
+                        break;
+                }
+            } else if (type == Type.DOUBLE) {
+                switch (offset) {
+                    case 0:
+                        output.addNoArgInstruction(DLOAD_0);
+                        break;
+                    case 1:
+                        output.addNoArgInstruction(DLOAD_1);
+                        break;
+                    case 2:
+                        output.addNoArgInstruction(DLOAD_2);
+                        break;
+                    case 3:
+                        output.addNoArgInstruction(DLOAD_3);
+                        break;
+                    default:
+                        output.addOneArgInstruction(DLOAD, offset);
+                        break;
+                }
             } else {
                 // Primitive types.
                 if (type == Type.INT || type == Type.BOOLEAN || type == Type.CHAR) {
@@ -203,6 +239,42 @@ class JVariable extends JExpression implements JLhs {
                         break;
                     default:
                         output.addOneArgInstruction(ASTORE, offset);
+                        break;
+                }
+            } else if (type == Type.LONG) {
+                switch (offset) {
+                    case 0:
+                        output.addNoArgInstruction(LSTORE_0);
+                        break;
+                    case 1:
+                        output.addNoArgInstruction(LSTORE_1);
+                        break;
+                    case 2:
+                        output.addNoArgInstruction(LSTORE_2);
+                        break;
+                    case 3:
+                        output.addNoArgInstruction(LSTORE_3);
+                        break;
+                    default:
+                        output.addOneArgInstruction(LSTORE, offset);
+                        break;
+                }
+            } else if (type == Type.DOUBLE) {
+                switch (offset) {
+                    case 0:
+                        output.addNoArgInstruction(DSTORE_0);
+                        break;
+                    case 1:
+                        output.addNoArgInstruction(DSTORE_1);
+                        break;
+                    case 2:
+                        output.addNoArgInstruction(DSTORE_2);
+                        break;
+                    case 3:
+                        output.addNoArgInstruction(DSTORE_3);
+                        break;
+                    default:
+                        output.addOneArgInstruction(DSTORE, offset);
                         break;
                 }
             } else {

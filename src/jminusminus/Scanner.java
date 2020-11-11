@@ -381,10 +381,6 @@ class Scanner {
                 buffer.append(ch);
                 nextCh();
                 return new TokenInfo(LONG_LITERAL, buffer.toString(), line);
-
-
-
-
             }  else if (ch == '.') {
                 buffer.append(ch);
                 nextCh();

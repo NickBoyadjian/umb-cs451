@@ -185,8 +185,7 @@ class JNotEqualOp extends JBooleanBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.BOOLEAN);
-        rhs.type().mustMatchExpected(line(), Type.BOOLEAN);
+        lhs.type().mustMatchExpected(line(), rhs.type());
         type = Type.BOOLEAN;
         return this;
     }
@@ -199,7 +198,14 @@ class JNotEqualOp extends JBooleanBinaryExpression {
         rhs.codegen(output);
         if (lhs.type().isReference())
             output.addBranchInstruction(onTrue ? IF_ACMPNE : IF_ACMPEQ, targetLabel);
-        else
-            output.addBranchInstruction(onTrue ? IF_ICMPNE : IF_ICMPEQ, targetLabel);
+        else {
+            if (lhs.type() == Type.LONG) {
+                output.addNoArgInstruction(LCMP);
+                output.addNoArgInstruction(ICONST_1);
+                output.addBranchInstruction(onTrue ? IF_ICMPNE : IF_ICMPEQ, targetLabel);
+            } else {
+                output.addBranchInstruction(onTrue ? IF_ICMPNE : IF_ICMPEQ, targetLabel);
+            }
+        }
     }
 }
