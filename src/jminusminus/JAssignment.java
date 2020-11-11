@@ -561,6 +561,12 @@ class JXorAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for ^=: " + lhs.type());
@@ -573,9 +579,15 @@ class JXorAssignOp extends JAssignment {
      */
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IXOR);
+        if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LXOR);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IXOR);
+        }
         if (!isStatementExpression) {
             ((JLhs) lhs).codegenDuplicateRvalue(output);
         }
@@ -612,6 +624,12 @@ class JALeftShiftAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for <<=: " + lhs.type());
@@ -624,9 +642,15 @@ class JALeftShiftAssignOp extends JAssignment {
      */
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(ISHL);
+        if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LSHL);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(ISHL);
+        }
         if (!isStatementExpression) {
             ((JLhs) lhs).codegenDuplicateRvalue(output);
         }
@@ -663,6 +687,12 @@ class JARightShiftAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for >>=: " + lhs.type());
@@ -675,9 +705,15 @@ class JARightShiftAssignOp extends JAssignment {
      */
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(ISHR);
+        if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LSHR);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(ISHR);
+        }
         if (!isStatementExpression) {
             ((JLhs) lhs).codegenDuplicateRvalue(output);
         }
@@ -714,6 +750,12 @@ class JLRightShiftAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        } else if (lhs.type().equals(Type.LONG)) {
+            rhs.type().mustMatchExpected(line(), Type.LONG);
+            type = Type.LONG;
+        } else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for >>>=: " + lhs.type());
@@ -726,9 +768,15 @@ class JLRightShiftAssignOp extends JAssignment {
      */
     public void codegen(CLEmitter output) {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
-        ((JLhs) lhs).codegenLoadLhsRvalue(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(LSHR);
+        if (lhs.type().equals(Type.LONG)) {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LUSHR);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IUSHR);
+        }
         if (!isStatementExpression) {
             ((JLhs) lhs).codegenDuplicateRvalue(output);
         }
