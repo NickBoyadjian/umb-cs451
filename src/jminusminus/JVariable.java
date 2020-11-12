@@ -278,7 +278,6 @@ class JVariable extends JExpression implements JLhs {
                         break;
                 }
             } else {
-                // Primitive types.
                 if (type == Type.INT || type == Type.BOOLEAN || type == Type.CHAR) {
                     switch (offset) {
                         case 0:

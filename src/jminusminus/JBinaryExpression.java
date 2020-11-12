@@ -77,9 +77,17 @@ class JMultiplyOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+            type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else if (lhs.type() == Type.DOUBLE && rhs.type() == Type.DOUBLE) {
+            type = Type.DOUBLE;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for *");
+        }
+
         return this;
     }
 
@@ -87,9 +95,19 @@ class JMultiplyOp extends JBinaryExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IMUL);
+        if (type == Type.INT) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IMUL);
+        } else if (type == Type.LONG) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LMUL);
+        } else if (type == Type.DOUBLE) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DMUL);
+        }
     }
 }
 
@@ -112,9 +130,16 @@ class JDivideOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+            type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else if (lhs.type() == Type.DOUBLE && rhs.type() == Type.DOUBLE) {
+            type = Type.DOUBLE;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for /");
+        }
         return this;
     }
 
@@ -122,14 +147,24 @@ class JDivideOp extends JBinaryExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IDIV);
+        if (type == Type.INT) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IDIV);
+        } else if (type == Type.LONG) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LDIV);
+        } else if (type == Type.DOUBLE) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DDIV);
+        }
     }
 }
 
 /**
- * The AST node for a division (/) expression.
+ * The AST node for a remainder (%) expression.
  */
 class JRemainderOp extends JBinaryExpression {
     /**
@@ -147,9 +182,16 @@ class JRemainderOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+            type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else if (lhs.type() == Type.DOUBLE && rhs.type() == Type.DOUBLE) {
+            type = Type.DOUBLE;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for /");
+        }
         return this;
     }
 
@@ -157,9 +199,19 @@ class JRemainderOp extends JBinaryExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IREM);
+        if (type == Type.INT) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IREM);
+        } else if (type == Type.LONG) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LREM);
+        } else if (type == Type.DOUBLE) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DREM);
+        }
     }
 }
 
@@ -238,9 +290,16 @@ class JSubtractOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+            type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else if (lhs.type() == Type.DOUBLE && rhs.type() == Type.DOUBLE) {
+            type = Type.DOUBLE;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for -");
+        }
         return this;
     }
 
@@ -248,9 +307,19 @@ class JSubtractOp extends JBinaryExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(ISUB);
+        if (type == Type.INT) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(ISUB);
+        } else if (type == Type.LONG) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LSUB);
+        } else if (type == Type.DOUBLE) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DSUB);
+        }
     }
 }
 
@@ -275,9 +344,14 @@ class JInclusiveOrOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+            type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for |");
+        }
         return this;
     }
 
@@ -285,9 +359,15 @@ class JInclusiveOrOp extends JBinaryExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IOR);
+        if (type == Type.INT) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IOR);
+        } else if (type == Type.LONG) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LOR);
+        }
     }
 }
 
@@ -312,9 +392,14 @@ class JExclusiveOrOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+            type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for ^");
+        }
         return this;
     }
 
@@ -322,9 +407,15 @@ class JExclusiveOrOp extends JBinaryExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IXOR);
+        if (type == Type.INT) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IXOR);
+        } else if (type == Type.LONG) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LXOR);
+        }
     }
 }
 
@@ -349,9 +440,14 @@ class JAndOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+            type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for &");
+        }
         return this;
     }
 
@@ -359,9 +455,15 @@ class JAndOp extends JBinaryExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IAND);
+        if (type == Type.INT) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IAND);
+        } else if (type == Type.LONG) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LAND);
+        }
     }
 }
 
@@ -386,9 +488,14 @@ class JALeftShiftOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+            type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for <<");
+        }
         return this;
     }
 
@@ -396,14 +503,20 @@ class JALeftShiftOp extends JBinaryExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(ISHL);
+        if (type == Type.INT) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(ISHL);
+        } else if (type == Type.LONG) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LSHL);
+        }
     }
 }
 
 /**
- * The AST node for an arithmetic right shift (<<) expression.
+ * The AST node for an arithmetic right shift (>>) expression.
  */
 class JARightShiftOp extends JBinaryExpression {
     /**
@@ -423,9 +536,14 @@ class JARightShiftOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+            type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for >>");
+        }
         return this;
     }
 
@@ -433,14 +551,20 @@ class JARightShiftOp extends JBinaryExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(ISHR);
+        if (type == Type.INT) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(ISHR);
+        } else if (type == Type.LONG) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LSHR);
+        }
     }
 }
 
 /**
- * The AST node for a logical right shift (<<) expression.
+ * The AST node for a logical right shift (>>>) expression.
  */
 class JLRightShiftOp extends JBinaryExpression {
     /**
@@ -460,9 +584,14 @@ class JLRightShiftOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+            type = Type.INT;
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Invalid operand types for >>>");
+        }
         return this;
     }
 
@@ -470,8 +599,14 @@ class JLRightShiftOp extends JBinaryExpression {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IUSHR);
+        if (type == Type.INT) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(IUSHR);
+        } else if (type == Type.LONG) {
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(LUSHR);
+        }
     }
 }

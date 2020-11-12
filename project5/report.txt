@@ -37,11 +37,28 @@
    One of the first things I tested was created double variables which wasn't working. I checked the
    JVariable class and saw where it was handling the offset loading of ints. I took this as a template
    and added the check for longs and doubles and then just changed the appropriate JVM byte code
-   instruction. I could now declare variables of type double and long. Lastly I could see that I
-   needed to extend all the operators to work with doubles and longs so I went ahead and extended all
-   of them to do so.
+   instruction. I could now declare variables of type double and long.
 
-   Problem 2 (Operators): ...
+   I ended up forgetting to add support for doubles and longs in the variableDeclaration class
+   so I ended up coming back to this problem later on to add it. What I did to get this working was
+   check, in analysis, if the definition type was a double or a long, and if it was, increment
+   the offset one more time. I also needed to add support to the method declarations and what I did
+   for that was go into the analyze method, and in the for loop that deals with the parameters,
+   check if the param is a double or a long, and then just increment the offset one more time.
+
+   Problem 2 (Operators):
+   I started this problem by going into the JAssignmentExpression file and working my way down all the
+   classes. For the analyze methods, I really just needed to make sure It was now checking for long
+   and doubles and then handling a few edge cases. For example the += operator could also work on
+   Strings, but the others couldn't. From here it was mostly just doing the same thing for all the
+   operators. In terms of the codegen methods, I would look for the appropriate JVM byte code
+   instruction and then just replace that in each method.
+
+   After getting all the assignments working, I went on to implement the JBinaryExpression file.
+   This was similar to the assignments. I had to add extra checks since the operators didn't
+   only work with ints, and then just use the different versions of the byte code.
+
+
    
    Problem 3 (Conditional Expression): ...
 

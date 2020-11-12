@@ -111,8 +111,16 @@ class JNegateOp extends JUnaryExpression {
      */
     public JExpression analyze(Context context) {
         operand = operand.analyze(context);
-        operand.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (operand.type() == Type.INT) {
+            type = Type.INT;
+        } else if (operand.type() == Type.LONG) {
+            type = Type.LONG;
+        } else if (operand.type() == Type.DOUBLE) {
+            type = Type.DOUBLE;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Operand to - must have an LValue.");
+        }
         return this;
     }
 
@@ -121,7 +129,13 @@ class JNegateOp extends JUnaryExpression {
      */
     public void codegen(CLEmitter output) {
         operand.codegen(output);
-        output.addNoArgInstruction(INEG);
+        if (type == Type.INT) {
+            output.addNoArgInstruction(INEG);
+        } else if (type == Type.LONG) {
+            output.addNoArgInstruction(LNEG);
+        } else if (type == Type.DOUBLE) {
+            output.addNoArgInstruction(DNEG);
+        }
     }
 }
 

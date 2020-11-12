@@ -166,6 +166,9 @@ class JMethodDeclaration extends JAST implements JMember {
             LocalVariableDefn defn = new LocalVariableDefn(param.type(), this.context.nextOffset());
             defn.initialize();
             this.context.addEntry(param.line(), param.name(), defn);
+
+            if (defn.type() == Type.LONG || defn.type() == Type.DOUBLE)
+                this.context.nextOffset();
         }
 
         if (body != null) {
@@ -174,6 +177,7 @@ class JMethodDeclaration extends JAST implements JMember {
                 JAST.compilationUnit.reportSemanticError(line(),
                         "Non-void method must have a return statement");
             }
+
         }
         return this;
     }
