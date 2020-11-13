@@ -194,8 +194,17 @@ class JPreDecrementOp extends JUnaryExpression {
             type = Type.ANY;
         } else {
             operand = (JExpression) operand.analyze(context);
-            operand.type().mustMatchExpected(line(), Type.INT);
-            type = Type.INT;
+            if (operand.type() == Type.INT) {
+                type = Type.INT;
+            } else if (operand.type() == Type.LONG) {
+                type = Type.LONG;
+            } else if (operand.type() == Type.DOUBLE) {
+                type = Type.DOUBLE;
+            } else {
+                type = Type.ANY;
+                JAST.compilationUnit.reportSemanticError(line(),
+                        "Invalid Operand Type");
+            }
         }
         return this;
     }
@@ -208,7 +217,7 @@ class JPreDecrementOp extends JUnaryExpression {
             // A local variable; otherwise analyze() would have replaced it with an explicit
             // field selection.
             int offset = ((LocalVariableDefn) ((JVariable) operand).iDefn()).offset();
-            output.addIINCInstruction(offset, 1);
+            output.addIINCInstruction(offset, -1);
             if (!isStatementExpression) {
                 // Loading its original rvalue.
                 operand.codegen(output);
@@ -216,8 +225,16 @@ class JPreDecrementOp extends JUnaryExpression {
         } else {
             ((JLhs) operand).codegenLoadLhsLvalue(output);
             ((JLhs) operand).codegenLoadLhsRvalue(output);
-            output.addNoArgInstruction(ICONST_1);
-            output.addNoArgInstruction(ISUB);
+            if (type == Type.INT) {
+                output.addNoArgInstruction(ICONST_1);
+                output.addNoArgInstruction(ISUB);
+            } else if (type == Type.LONG) {
+                output.addNoArgInstruction(LCONST_1);
+                output.addNoArgInstruction(LSUB);
+            } else if (type == Type.DOUBLE) {
+                output.addNoArgInstruction(DCONST_1);
+                output.addNoArgInstruction(DSUB);
+            }
             if (!isStatementExpression) {
                 // Loading its original rvalue.
                 ((JLhs) operand).codegenDuplicateRvalue(output);
@@ -362,8 +379,12 @@ class JPostIncrementOp extends JUnaryExpression {
             type = Type.ANY;
         } else {
             operand = (JExpression) operand.analyze(context);
-            operand.type().mustMatchExpected(line(), Type.INT);
-            type = Type.INT;
+            if (operand.type() == Type.INT)
+                type = Type.INT;
+            else if (operand.type() == Type.LONG)
+                type = Type.LONG;
+            else if (operand.type() == Type.DOUBLE)
+                type = Type.DOUBLE;
         }
         return this;
     }
@@ -380,7 +401,7 @@ class JPostIncrementOp extends JUnaryExpression {
                 // Loading its original rvalue.
                 operand.codegen(output);
             }
-            output.addIINCInstruction(offset, -1);
+            output.addIINCInstruction(offset, 1);
         } else {
             ((JLhs) operand).codegenLoadLhsLvalue(output);
             ((JLhs) operand).codegenLoadLhsRvalue(output);
@@ -388,8 +409,16 @@ class JPostIncrementOp extends JUnaryExpression {
                 // Loading its original rvalue.
                 ((JLhs) operand).codegenDuplicateRvalue(output);
             }
-            output.addNoArgInstruction(ICONST_1);
-            output.addNoArgInstruction(ISUB);
+            if (type == Type.INT) {
+                output.addNoArgInstruction(ICONST_1);
+                output.addNoArgInstruction(IADD);
+            } else if (type == Type.LONG) {
+                output.addNoArgInstruction(LCONST_1);
+                output.addNoArgInstruction(LADD);
+            } else if (type == Type.DOUBLE) {
+                output.addNoArgInstruction(DCONST_1);
+                output.addNoArgInstruction(DADD);
+            }
             ((JLhs) operand).codegenStore(output);
         }
     }

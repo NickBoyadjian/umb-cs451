@@ -27,8 +27,12 @@ class JConditionalExpression extends JExpression {
     public JExpression analyze(Context context) {
         conditional = (JExpression) conditional.analyze(context);
         conditional.type().mustMatchExpected(line(), Type.BOOLEAN);
+
         trueBranch = (JExpression) trueBranch.analyze(context);
         falseBranch = (JExpression) falseBranch.analyze(context);
+        trueBranch.type().mustMatchExpected(line(), falseBranch.type());
+
+        type = trueBranch.type();
         return this;
     }
 
@@ -38,7 +42,9 @@ class JConditionalExpression extends JExpression {
     public void codegen(CLEmitter output) {
         String elseLabel = output.createLabel();
         String endLabel = output.createLabel();
+
         conditional.codegen(output, elseLabel, false);
+
         trueBranch.codegen(output);
         output.addBranchInstruction(GOTO, endLabel);
         output.addLabel(elseLabel);
