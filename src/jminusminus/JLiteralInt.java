@@ -22,6 +22,10 @@ class JLiteralInt extends JExpression {
         this.text = text;
     }
 
+    public int getImage() {
+        return Integer.parseInt(this.text);
+    }
+
     /**
      * {@inheritDoc}
      */

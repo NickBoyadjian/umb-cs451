@@ -2,19 +2,22 @@ package jminusminus;
 
 public class JDoStatement extends JStatement {
 
-    private JStatement statement;
-    private JExpression expression;
+    private JStatement body;
+    private JExpression condition;
 
     JDoStatement (int line, JStatement statement, JExpression expression) {
         super(line);
-        this.statement = statement;
-        this.expression = expression;
+        this.body = statement;
+        this.condition = expression;
     }
 
     /**
      * {@inheritDoc}
      */
     public JStatement analyze(Context context) {
+        condition = condition.analyze(context);
+        condition.type().mustMatchExpected(line(), Type.BOOLEAN);
+        body = (JStatement) body.analyze(context);
         return this;
     }
 
@@ -22,7 +25,11 @@ public class JDoStatement extends JStatement {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
+        String bodyLabel = output.createLabel();
+        output.addLabel(bodyLabel);
+        body.codegen(output);
 
+        condition.codegen(output, bodyLabel, true);
     }
 
     /**
@@ -32,13 +39,13 @@ public class JDoStatement extends JStatement {
         JSONElement e = new JSONElement();
         json.addChild("JDoStatement:" + line, e);
 
-        JSONElement body = new JSONElement();
-        e.addChild("Body", body);
-        statement.toJSON(body);
+        JSONElement bodyJson = new JSONElement();
+        e.addChild("Body", bodyJson);
+        body.toJSON(bodyJson);
 
-        JSONElement condition = new JSONElement();
-        e.addChild("Condition", condition);
-        expression.toJSON(condition);
+        JSONElement conditionJson = new JSONElement();
+        e.addChild("Condition", conditionJson);
+        condition.toJSON(conditionJson);
     }
 
 }

@@ -46,6 +46,12 @@
    for that was go into the analyze method, and in the for loop that deals with the parameters,
    check if the param is a double or a long, and then just increment the offset one more time.
 
+   After hitting a road block with the basic types file, I finally had to go into the jvm byte code
+   to figure out why my program was compiling but wouldn't run. After looking around, I noticed that
+   the return type for a method that should return a long, was actually attempting to return an
+   object. For this I had to go into the JReturnStatement class and account for the new return types,
+   long and double. Finally at this point my code was working.
+
    Problem 2 (Operators):
    I started this problem by going into the JAssignmentExpression file and working my way down all the
    classes. For the analyze methods, I really just needed to make sure It was now checking for long
@@ -60,13 +66,27 @@
 
 
    
-   Problem 3 (Conditional Expression): ...
+   Problem 3 (Conditional Expression):
+   Implementing condition expressions was very to if statements, the main difference was that
+   I didn't need to check for null else branches. In the analyze method, I simply made sure that
+   the conditional part was a boolean and that the two branches were of the same type.
+   As for the code gen, I started with the if statement codegen as a basis and stripped away
+   the checks for null, because with a conditional expression you can always assume that the
+   else branch will be there.
 
    Problem 4 (Switch Statement): ...
 
-   Problem 5 (Do-While Statement): ...
+   Problem 5 (Do-While Statement):
+   Implementing the Do While statement ended up being easier than I expected. I started by looking
+   over the While statement to get an idea of how it would work. The analyze was exactly the same.
+   All the code needed to do was check if the condition was a boolean and then just analize the
+   body of the expression. As for the codegen method, it was much more simple than the while loop.
+   I had to create a label at the top of the body, so the code would be able to loop.
+   Then I just needed to run codegen on the condition and if the condition evaluated to true,
+   it would need to go back up to the label on the body.
 
    Problem 6 (For Statement): ...
+
 
    Problem 7 (Break Statement): ...
 

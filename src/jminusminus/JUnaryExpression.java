@@ -158,8 +158,16 @@ class JUnaryPlusOp extends JUnaryExpression {
      */
     public JExpression analyze(Context context) {
         operand = operand.analyze(context);
-        operand.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        if (operand.type() == Type.INT) {
+            type = Type.INT;
+        } else if (operand.type() == Type.LONG) {
+            type = Type.LONG;
+        } else if (operand.type() == Type.DOUBLE) {
+            type = Type.DOUBLE;
+        } else {
+            type = Type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(), "Operand to + must have an LValue.");
+        }
         return this;
     }
 
@@ -263,12 +271,21 @@ class JPostDecrementOp extends JUnaryExpression {
      */
     public JExpression analyze(Context context) {
         if (!(operand instanceof JLhs)) {
-            JAST.compilationUnit.reportSemanticError(line, "Operand to -- must have an LValue.");
+            JAST.compilationUnit.reportSemanticError(line, "Operand to ++ must have an LValue.");
             type = Type.ANY;
         } else {
             operand = (JExpression) operand.analyze(context);
-            operand.type().mustMatchExpected(line(), Type.INT);
-            type = Type.INT;
+            if (operand.type() == Type.INT)
+                type = Type.INT;
+            else if (operand.type() == Type.LONG)
+                type = Type.LONG;
+            else if (operand.type() == Type.DOUBLE)
+                type = Type.DOUBLE;
+            else {
+                type = Type.ANY;
+                JAST.compilationUnit.reportSemanticError(line(),
+                        "Invalid Operand Type");
+            }
         }
         return this;
     }
@@ -293,8 +310,16 @@ class JPostDecrementOp extends JUnaryExpression {
                 // Loading its original rvalue.
                 ((JLhs) operand).codegenDuplicateRvalue(output);
             }
-            output.addNoArgInstruction(ICONST_1);
-            output.addNoArgInstruction(ISUB);
+            if (type == Type.INT) {
+                output.addNoArgInstruction(ICONST_1);
+                output.addNoArgInstruction(ISUB);
+            } else if (type == Type.LONG) {
+                output.addNoArgInstruction(LCONST_1);
+                output.addNoArgInstruction(LSUB);
+            } else if (type == Type.DOUBLE) {
+                output.addNoArgInstruction(DCONST_1);
+                output.addNoArgInstruction(DSUB);
+            }
             ((JLhs) operand).codegenStore(output);
         }
     }
@@ -323,8 +348,16 @@ class JPreIncrementOp extends JUnaryExpression {
             type = Type.ANY;
         } else {
             operand = (JExpression) operand.analyze(context);
-            operand.type().mustMatchExpected(line(), Type.INT);
-            type = Type.INT;
+            if (operand.type() == Type.INT)
+                type = Type.INT;
+            else if (operand.type() == Type.LONG)
+                type = Type.LONG;
+            else if (operand.type() == Type.DOUBLE)
+                type = Type.DOUBLE;
+            else {
+                type = Type.ANY;
+                JAST.compilationUnit.reportSemanticError(line(),"Invalid Operand Type");
+            }
         }
         return this;
     }
@@ -345,12 +378,21 @@ class JPreIncrementOp extends JUnaryExpression {
         } else {
             ((JLhs) operand).codegenLoadLhsLvalue(output);
             ((JLhs) operand).codegenLoadLhsRvalue(output);
-            output.addNoArgInstruction(ICONST_1);
-            output.addNoArgInstruction(IADD);
-            if (!isStatementExpression) {
-                // Loading its original rvalue.
-                ((JLhs) operand).codegenDuplicateRvalue(output);
+
+            if (type == Type.INT) {
+                output.addNoArgInstruction(ICONST_1);
+                output.addNoArgInstruction(IADD);
+            } else if (type == Type.LONG) {
+                output.addNoArgInstruction(LCONST_1);
+                output.addNoArgInstruction(LADD);
+            } else if (type == Type.DOUBLE) {
+                output.addNoArgInstruction(DCONST_1);
+                output.addNoArgInstruction(DADD);
             }
+
+            if (!isStatementExpression)
+                ((JLhs) operand).codegenDuplicateRvalue(output);
+
             ((JLhs) operand).codegenStore(output);
         }
     }
@@ -385,6 +427,11 @@ class JPostIncrementOp extends JUnaryExpression {
                 type = Type.LONG;
             else if (operand.type() == Type.DOUBLE)
                 type = Type.DOUBLE;
+            else {
+                type = Type.ANY;
+                JAST.compilationUnit.reportSemanticError(line(),
+                        "Invalid Operand Type");
+            }
         }
         return this;
     }
@@ -425,7 +472,7 @@ class JPostIncrementOp extends JUnaryExpression {
 }
 
 /**
- * The AST node for pre-increment (~) expression.
+ * The AST node for unary not (~) expression.
  */
 class JComplementOp extends JUnaryExpression {
     /**
@@ -453,8 +500,7 @@ class JComplementOp extends JUnaryExpression {
      */
     public void codegen(CLEmitter output) {
         operand.codegen(output);
-        output.addNoArgInstruction(ICONST_1);
-        output.addNoArgInstruction(INEG);
+        output.addNoArgInstruction(ICONST_M1);
         output.addNoArgInstruction(IXOR);
     }
 }

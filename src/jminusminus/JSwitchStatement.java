@@ -1,6 +1,9 @@
 package jminusminus;
 
+import java.lang.reflect.GenericDeclaration;
 import java.util.ArrayList;
+import java.util.TreeMap;
+import static jminusminus.CLConstants.*;
 
 public class JSwitchStatement extends JStatement {
     private JExpression parExpression;
@@ -16,6 +19,15 @@ public class JSwitchStatement extends JStatement {
      * {@inheritDoc}
      */
     public JStatement analyze(Context context) {
+        // Analyze the condition and make sure it is an integer
+        parExpression = (JExpression) parExpression.analyze(context);
+        parExpression.type().mustMatchExpected(line(), Type.INT);
+        parExpression.type = Type.INT;
+
+
+        for (JSwitchBlockStatementGroup s : switchBlockStatementGroup) {
+            s = (JSwitchBlockStatementGroup) s.analyze(context);
+        }
         return this;
     }
 
@@ -23,6 +35,77 @@ public class JSwitchStatement extends JStatement {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
+        // generate the code for the parenthesized expression
+        parExpression.codegen(output);
+
+        // Initialize all the data
+        String defaultLabel = output.createLabel();
+        String exitLabel = output.createLabel();
+
+        TreeMap<Integer, String> switchCasePairs = new TreeMap<>();
+        ArrayList<String> caseLabels = new ArrayList<>();
+
+        int hi = Integer.MIN_VALUE;
+        int lo = Integer.MAX_VALUE;
+
+        for (JSwitchBlockStatementGroup block : switchBlockStatementGroup) {
+            if (block.hi > hi)
+                hi = block.hi;
+
+            if (block.lo < lo)
+                lo = block.lo;
+        }
+
+        // Loop through the labels in each group and populate caseLabels
+        for (JSwitchBlockStatementGroup group : switchBlockStatementGroup) {
+            for (JExpression label : group.switchLabels) {
+                if (label != null) {
+                    int value = ((JLiteralInt) label).getImage();
+                    String caseLabel = output.createLabel();
+                    caseLabels.add(caseLabel);
+                    switchCasePairs.put(value, caseLabel);
+                }
+            }
+        }
+
+        int nlabels = switchCasePairs.size();
+        long table_space_cost = 4 + (( long ) hi - lo + 1);
+        long table_time_cost = 3;
+        long lookup_space_cost = 3 + 2 * ( long ) nlabels;
+        long lookup_time_cost = nlabels;
+        int opcode = ( nlabels > 0 && table_space_cost + 3 * table_time_cost <= lookup_space_cost
+                +  3 * lookup_time_cost ) ? TABLESWITCH : LOOKUPSWITCH;
+
+
+        if (opcode == TABLESWITCH) {
+            output.addTABLESWITCHInstruction(defaultLabel, lo, hi, caseLabels);
+        } else {
+            output.addLOOKUPSWITCHInstruction(defaultLabel, nlabels, switchCasePairs);
+        }
+
+        int index = 0;
+        // Loop through the statements in each group and generate the code
+        for (JSwitchBlockStatementGroup group : switchBlockStatementGroup) {
+            for (JExpression label : group.switchLabels) {
+                if (label != null) {
+                    output.addLabel(caseLabels.get(index));
+                    index++;
+                } else {
+                    output.addLabel(defaultLabel);
+                }
+            }
+
+            for (JStatement block : group.blockStatements) {
+                if (block instanceof JBreakStatement) {
+                    output.addBranchInstruction(GOTO, exitLabel);
+                } else {
+                    block.codegen(output);
+                }
+            }
+        }
+
+        output.addLabel(exitLabel);
+
 
     }
 
