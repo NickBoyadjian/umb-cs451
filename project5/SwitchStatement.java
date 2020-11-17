@@ -24,21 +24,21 @@ public class SwitchStatement {
         default:
             rankStr = String.valueOf(rank);
         }
-//        String suitStr = "";
-//        switch (suit) {
-//        case 1:
-//            suitStr = "Spades";
-//            break;
-//        case 2:
-//            suitStr = "Hearts";
-//            break;
-//        case 3:
-//            suitStr = "Diamonds";
-//            break;
-//        case 4:
-//            suitStr = "Clubs";
-//            break;
-//        }
-        System.out.println(rankStr);
+        String suitStr = "";
+        switch (suit) {
+        case 1:
+            suitStr = "Spades";
+            break;
+        case 2:
+            suitStr = "Hearts";
+            break;
+        case 3:
+            suitStr = "Diamonds";
+            break;
+        case 4:
+            suitStr = "Clubs";
+            break;
+        }
+        System.out.println(rankStr + " of " + suitStr);
     }
 }

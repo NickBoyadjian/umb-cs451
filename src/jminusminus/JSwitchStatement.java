@@ -41,27 +41,23 @@ public class JSwitchStatement extends JStatement {
         // Initialize all the data
         String defaultLabel = output.createLabel();
         String exitLabel = output.createLabel();
-
         TreeMap<Integer, String> switchCasePairs = new TreeMap<>();
         ArrayList<String> caseLabels = new ArrayList<>();
 
+        // get the lo and hig values
         int hi = Integer.MIN_VALUE;
         int lo = Integer.MAX_VALUE;
-
         for (JSwitchBlockStatementGroup block : switchBlockStatementGroup) {
-            if (block.hi > hi)
-                hi = block.hi;
-
-            if (block.lo < lo)
-                lo = block.lo;
+            if (block.hi > hi) hi = block.hi;
+            if (block.lo < lo) lo = block.lo;
         }
 
-        // Loop through the labels in each group and populate caseLabels
+        // Loop through the labels in each group and populate caseLabels and pairs
         for (JSwitchBlockStatementGroup group : switchBlockStatementGroup) {
             for (JExpression label : group.switchLabels) {
                 if (label != null) {
-                    int value = ((JLiteralInt) label).getImage();
                     String caseLabel = output.createLabel();
+                    int value = ((JLiteralInt) label).getImage();
                     caseLabels.add(caseLabel);
                     switchCasePairs.put(value, caseLabel);
                 }
@@ -84,6 +80,7 @@ public class JSwitchStatement extends JStatement {
         }
 
         int index = 0;
+        boolean defaulted = false;
         // Loop through the statements in each group and generate the code
         for (JSwitchBlockStatementGroup group : switchBlockStatementGroup) {
             for (JExpression label : group.switchLabels) {
@@ -91,9 +88,13 @@ public class JSwitchStatement extends JStatement {
                     output.addLabel(caseLabels.get(index));
                     index++;
                 } else {
+                    defaulted = true;
                     output.addLabel(defaultLabel);
                 }
             }
+
+            if (!defaulted)
+                output.addLabel(defaultLabel);
 
             for (JStatement block : group.blockStatements) {
                 if (block instanceof JBreakStatement) {

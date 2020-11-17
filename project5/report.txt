@@ -74,7 +74,30 @@
    the checks for null, because with a conditional expression you can always assume that the
    else branch will be there.
 
-   Problem 4 (Switch Statement): ...
+   Problem 4 (Switch Statement):
+   This was definitely one of the harder problems in the assignment. I started by implementing
+   the analyze methods for the switch statement and switch block statement group.
+   In the switch block statement group, I made sure that the labels were all literal ints.
+   After that I decided I would implement the code for getting the hi and lo value
+   within the analyze method. This was as simple as setting them to the max and min int values
+   and then updating them as I loop over all the labels.
+
+   From here, I started working on the codegen method. I ended up doing all the code gen
+   within the JSwitchStatement class because I though it was easier for myself to do it
+   all in one place. I Started by initializing all my data and pulling out the hi and lo
+   values from the switch block statement groups. I then looped over the groups and populated
+   my data structures with the labels. From here I basically copied over the formula from the
+   assignment to determine whether to do a TABLESWITCH or LOOKUPSWITCH. I then just needed
+   to look up the parameters for the CLE methods and pass the correct things.
+
+   This is now where I got stuck for a while. I had to loop over the labels and the block
+   statements again to generate the code and add the labels in the right place. What I
+   struggled to realize was that when there isn't a default, you need to generate one,
+   otherwise the code won't work properly. Once I realized this from trial and error,
+   testing different things in the sample java file, I realized that not having a default
+   was what was not letting my code compile. So what I did was create a boolean to
+   store whether or not a default was created, and if it wasn't I just needed to
+   create one with no body.
 
    Problem 5 (Do-While Statement):
    Implementing the Do While statement ended up being easier than I expected. I started by looking
@@ -85,7 +108,20 @@
    Then I just needed to run codegen on the condition and if the condition evaluated to true,
    it would need to go back up to the label on the body.
 
-   Problem 6 (For Statement): ...
+   Problem 6 (For Statement):
+   I started this problem like all the others, by going over the analyze method first. From the
+   checklist, I knew I would need to create a new context for the for statement. This is because
+   we declare new variables in the for init section. Using the new local context was pretty
+   straight forward, I analyzed all the member variables and just passed in the local context
+   instead of the global one.
+
+   For the codegen method, I had to do a little bit more work. I started by compiling the
+   sample file with javac and then inspecting the class file with javap. I saw how the for
+   statement was structured in the byte code. You first handle the init section. Then you have
+   the condition. If the condition is false, you jump down to the end, otherwise you go through
+   the body of the for statement. At the end of the body, you generate the update and then
+   jump back up to the condition. This was easy enough to code out, all I really needed to do
+   was add labels in the right place to make sure the code would jump to the appropriate spots.
 
 
    Problem 7 (Break Statement): ...
