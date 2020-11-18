@@ -1,8 +1,17 @@
 package jminusminus;
 
+import static jminusminus.CLConstants.GOTO;
+
 public class JBreakStatement extends JStatement {
+    JStatement enclosingStatement;
+    Parser p;
 
     JBreakStatement (int line) { super(line); }
+
+    JBreakStatement (int line, Parser p) {
+        super(line);
+        this.p = p;
+    }
 
     /**
      * {@inheritDoc}
@@ -15,7 +24,8 @@ public class JBreakStatement extends JStatement {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-
+        if (this.p != null)
+            output.addBranchInstruction(GOTO, p.enclosingStatement.breakLabel);
     }
 
     /**

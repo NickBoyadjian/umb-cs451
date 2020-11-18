@@ -124,7 +124,22 @@
    was add labels in the right place to make sure the code would jump to the appropriate spots.
 
 
-   Problem 7 (Break Statement): ...
+   Problem 7 (Break Statement):
+   This problem was one of the hardest on the assignment. It took me a lot of testing to
+   finally get a solution working. I started by going straight into the break statement and seeing
+   if I could find a way to get the enclosing statement but I wasn't able to figure anything
+   out. I then thought of going to the parse and storing the statements and then passing them
+   into the break statement when I create it. This didn't work because the break statement
+   was being generated before the enclosing statement was done being made (since the calls are
+   recursive).
+
+   I ended up doing this in a weird way which I don't think is optimal. I store the JStatement
+   in the parser, and then have two booleans to check if the break statement was found, and if
+   the enclosing statement was already set. From here I set them when appropriate and then pass
+   the whole parser to the jbreakstatement. This was I can extract the variable from there
+   since by the time I get to codegen, the enclosing statement is already set. I also had to modify
+   the JStatement abstract class to store the breakLabel, that way I could access it no matter
+   the type of the enclosing statement.
 
    Problem 8 (Continue Statement): ...
 

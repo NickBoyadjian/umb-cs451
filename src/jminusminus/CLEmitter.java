@@ -148,6 +148,10 @@ public class CLEmitter {
         return errorHasOccurred;
     }
 
+    public Hashtable<String, Integer> getMLabels() {
+        return mLabels;
+    }
+
     /**
      * Adds a class or interface to the class file.
      * <p>

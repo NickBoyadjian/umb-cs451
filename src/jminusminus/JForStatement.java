@@ -58,7 +58,7 @@ public class JForStatement extends JStatement {
     public void codegen(CLEmitter output) {
         // Start and exit labels to handle looping and exiting
         String conditionLabel = output.createLabel();
-        String exitLabel = output.createLabel();
+        breakLabel = output.createLabel();
 
         // Generate code for the init statements
         for (JStatement init : forInit) {
@@ -67,7 +67,7 @@ public class JForStatement extends JStatement {
 
         // Add the start label and check the condition -- jump to exit when false
         output.addLabel(conditionLabel);
-        condition.codegen(output, exitLabel, false);
+        condition.codegen(output, breakLabel, false);
 
         // Generate the code for the body
         body.codegen(output);
@@ -81,7 +81,7 @@ public class JForStatement extends JStatement {
         output.addBranchInstruction(GOTO, conditionLabel);
 
         // Add the exit label for when condition is false
-        output.addLabel(exitLabel);
+        output.addLabel(breakLabel);
     }
 
     /**

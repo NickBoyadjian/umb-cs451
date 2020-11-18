@@ -6,6 +6,7 @@ package jminusminus;
  * This abstract base class is the AST node for a statement (includes expressions).
  */
 abstract class JStatement extends JAST {
+    String breakLabel;
     /**
      * Constructs an AST node for a statement.
      *

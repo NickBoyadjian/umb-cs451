@@ -23,9 +23,9 @@ public class ExceptionHandlers {
     }
 
     private static double sqrt(double x) throws IllegalArgumentException {
-        if (x < 0.0) {
+        if (x >= 0.0) {
             throw new IllegalArgumentException("x must be positve");
         }
-        return Math.sqrt(x);
+        return sqrt(x);
     }
 }

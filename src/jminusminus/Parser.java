@@ -21,6 +21,11 @@ public class Parser {
     // Whether we have recovered from a parser error.
     private boolean isRecovered;
 
+    // Saving here to pass into the break statement
+    JStatement enclosingStatement;
+    boolean hasEnclosingStatement = false;
+    boolean foundBreak = false;
+
     /**
      * Constructs a parser from the given lexical analyzer.
      *
@@ -473,21 +478,37 @@ public class Parser {
      */
     private JStatement statement() {
         int line = scanner.token().line();
+
         if (see(LCURLY)) {
             return block();
+        } else if (have(WHILE)) {
+            this.hasEnclosingStatement = true;
+            JWhileStatement res = new JWhileStatement(line, parExpression(), statement());
+            if (foundBreak && this.enclosingStatement == null)
+                this.enclosingStatement = res;
+            return res;
         } else if (have(BREAK)) {
             mustBe(SEMI);
+            if (this.hasEnclosingStatement) {
+                this.foundBreak = true;
+                return new JBreakStatement(line, this);
+            }
             return new JBreakStatement(line);
         } else if (have(CONTINUE)) {
             mustBe(SEMI);
             return new JContinueStatement(line);
         } else if (have(DO)) {
+            this.hasEnclosingStatement = true;
             JStatement statement = statement();
             mustBe(WHILE);
             JExpression parExpression = parExpression();
             mustBe(SEMI);
-            return new JDoStatement(line, statement, parExpression);
+            JDoStatement res = new JDoStatement(line, statement, parExpression);
+            if (foundBreak && this.enclosingStatement == null)
+                this.enclosingStatement = res;
+            return res;
         } else if (have(FOR)) {
+            this.hasEnclosingStatement = true;
             ArrayList<JStatement> forInit = new ArrayList<>();
             ArrayList<JStatement> forUpdate = new ArrayList<>();
             JExpression forCondition = null;
@@ -503,8 +524,12 @@ public class Parser {
                 forUpdate = forUpdate(line);
             mustBe(RPAREN);
             forBody = statement();
-            return new JForStatement(line, forInit, forCondition, forUpdate, forBody);
-
+            JForStatement res = new JForStatement(line, forInit, forCondition, forUpdate, forBody);
+            if (foundBreak && this.enclosingStatement == null) {
+                System.out.println("setting");
+                this.enclosingStatement = res;
+            }
+            return res;
         } else if (have(IF)) {
             JExpression test = parExpression();
             JStatement consequent = statement();
@@ -536,10 +561,6 @@ public class Parser {
                 JBlock finallyBlock = block();
                 return new JTryStatement(line, tryBlock, null, null, finallyBlock);
             }
-        } else if (have(WHILE)) {
-            JExpression test = parExpression();
-            JStatement statement = statement();
-            return new JWhileStatement(line, test, statement);
         } else if (have(RETURN)) {
             if (have(SEMI)) {
                 return new JReturnStatement(line, null);

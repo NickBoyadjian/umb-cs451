@@ -34,6 +34,7 @@ class JWhileStatement extends JStatement {
         condition = condition.analyze(context);
         condition.type().mustMatchExpected(line(), Type.BOOLEAN);
         body = (JStatement) body.analyze(context);
+
         return this;
     }
 
@@ -43,11 +44,13 @@ class JWhileStatement extends JStatement {
     public void codegen(CLEmitter output) {
         String test = output.createLabel();
         String out = output.createLabel();
+        breakLabel = output.createLabel();
         output.addLabel(test);
         condition.codegen(output, out, false);
         body.codegen(output);
         output.addBranchInstruction(GOTO, test);
         output.addLabel(out);
+        output.addLabel(breakLabel);
     }
 
     /**

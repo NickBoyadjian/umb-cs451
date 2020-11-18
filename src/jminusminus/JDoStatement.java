@@ -26,10 +26,12 @@ public class JDoStatement extends JStatement {
      */
     public void codegen(CLEmitter output) {
         String bodyLabel = output.createLabel();
+        breakLabel = output.createLabel();
         output.addLabel(bodyLabel);
         body.codegen(output);
 
         condition.codegen(output, bodyLabel, true);
+        output.addLabel(breakLabel);
     }
 
     /**
