@@ -59,6 +59,7 @@ public class JForStatement extends JStatement {
         // Start and exit labels to handle looping and exiting
         String conditionLabel = output.createLabel();
         breakLabel = output.createLabel();
+        continueLabel = output.createLabel();
 
         // Generate code for the init statements
         for (JStatement init : forInit) {
@@ -73,6 +74,7 @@ public class JForStatement extends JStatement {
         body.codegen(output);
 
         // Generate the code for the update
+        output.addLabel(continueLabel);
         for (JStatement u : update) {
             u.codegen(output);
         }

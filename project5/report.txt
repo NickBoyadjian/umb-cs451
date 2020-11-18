@@ -142,6 +142,11 @@
    the type of the enclosing statement.
 
    Problem 8 (Continue Statement): ...
+   Problem 8 was essentially the same as 7. I went ahead and added the check in the parser
+   for continue statements and then passed the parser into it the same way. I also had to
+   add a continue label to the JStatement abstract class and then update it in the
+   while, do, and for statements. This was as simple as just changing the name in the code
+   gen methods I had already created.
 
    Problem 9 (Exception Handlers): ...
 

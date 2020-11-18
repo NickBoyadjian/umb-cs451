@@ -42,13 +42,13 @@ class JWhileStatement extends JStatement {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        String test = output.createLabel();
+        String continueLabel = output.createLabel();
         String out = output.createLabel();
         breakLabel = output.createLabel();
-        output.addLabel(test);
+        output.addLabel(continueLabel);
         condition.codegen(output, out, false);
         body.codegen(output);
-        output.addBranchInstruction(GOTO, test);
+        output.addBranchInstruction(GOTO, continueLabel);
         output.addLabel(out);
         output.addLabel(breakLabel);
     }

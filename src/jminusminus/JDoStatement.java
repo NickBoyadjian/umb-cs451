@@ -25,12 +25,12 @@ public class JDoStatement extends JStatement {
      * {@inheritDoc}
      */
     public void codegen(CLEmitter output) {
-        String bodyLabel = output.createLabel();
+        continueLabel = output.createLabel();
         breakLabel = output.createLabel();
-        output.addLabel(bodyLabel);
+        output.addLabel(continueLabel);
         body.codegen(output);
 
-        condition.codegen(output, bodyLabel, true);
+        condition.codegen(output, continueLabel, true);
         output.addLabel(breakLabel);
     }
 

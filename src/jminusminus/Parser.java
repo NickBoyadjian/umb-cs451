@@ -25,6 +25,7 @@ public class Parser {
     JStatement enclosingStatement;
     boolean hasEnclosingStatement = false;
     boolean foundBreak = false;
+    boolean foundContinue = false;
 
     /**
      * Constructs a parser from the given lexical analyzer.
@@ -484,7 +485,7 @@ public class Parser {
         } else if (have(WHILE)) {
             this.hasEnclosingStatement = true;
             JWhileStatement res = new JWhileStatement(line, parExpression(), statement());
-            if (foundBreak && this.enclosingStatement == null)
+            if ((foundBreak || foundContinue) && this.enclosingStatement == null)
                 this.enclosingStatement = res;
             return res;
         } else if (have(BREAK)) {
@@ -496,6 +497,10 @@ public class Parser {
             return new JBreakStatement(line);
         } else if (have(CONTINUE)) {
             mustBe(SEMI);
+            if (this.hasEnclosingStatement) {
+                this.foundContinue = true;
+                return new JContinueStatement(line, this);
+            }
             return new JContinueStatement(line);
         } else if (have(DO)) {
             this.hasEnclosingStatement = true;
@@ -504,7 +509,7 @@ public class Parser {
             JExpression parExpression = parExpression();
             mustBe(SEMI);
             JDoStatement res = new JDoStatement(line, statement, parExpression);
-            if (foundBreak && this.enclosingStatement == null)
+            if ((foundBreak || foundContinue) && this.enclosingStatement == null)
                 this.enclosingStatement = res;
             return res;
         } else if (have(FOR)) {
@@ -525,8 +530,7 @@ public class Parser {
             mustBe(RPAREN);
             forBody = statement();
             JForStatement res = new JForStatement(line, forInit, forCondition, forUpdate, forBody);
-            if (foundBreak && this.enclosingStatement == null) {
-                System.out.println("setting");
+            if ((foundBreak || foundContinue) && this.enclosingStatement == null) {
                 this.enclosingStatement = res;
             }
             return res;

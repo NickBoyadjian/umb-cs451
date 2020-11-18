@@ -7,6 +7,7 @@ package jminusminus;
  */
 abstract class JStatement extends JAST {
     String breakLabel;
+    String continueLabel;
     /**
      * Constructs an AST node for a statement.
      *
